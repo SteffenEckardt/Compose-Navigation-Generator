@@ -2,70 +2,40 @@ val navVersion: String by project
 val kspVersion: String by project
 
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp") version "1.7.0-1.0.6"
-    id("de.mannodermaus.android-junit5")
+    kotlin("jvm")
+    id("com.google.devtools.ksp")
 }
 
 ksp {
     arg("autoserviceKsp.verify", "true")
     arg("autoserviceKsp.verbose", "true")
-}
-
-android {
-    namespace = "de.se.cng.processor"
-    compileSdk = 32
-
-    defaultConfig {
-        minSdk = 23
-        targetSdk = 32
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
-    }
+    arg("verbose", "true")
 }
 
 dependencies {
     implementation(project(":annotation"))
     implementation(kotlin("stdlib"))
 
-    implementation("androidx.navigation:navigation-compose:$navVersion")
-
-    implementation("com.squareup:kotlinpoet:1.11.0")
-    implementation("com.squareup:kotlinpoet-ksp:1.11.0")
+    implementation("com.squareup:kotlinpoet:1.12.0")
+    implementation("com.squareup:kotlinpoet-ksp:1.12.0")
     implementation("com.google.devtools.ksp:symbol-processing-api:$kspVersion")
 
-    ksp("dev.zacsweers.autoservice:auto-service-ksp:1.0.0")
     implementation("com.google.auto.service:auto-service-annotations:1.0.1")
+    ksp("dev.zacsweers.autoservice:auto-service-ksp:1.0.0")
 
     // (Required) Writing and executing Unit Tests on the JUnit Platform
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
 
     // (Optional) If you need "Parameterized Tests"
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.8.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.0")
 
-    testImplementation("com.github.tschuchortdev:kotlin-compile-testing:1.4.8")
-    testImplementation("com.github.tschuchortdev:kotlin-compile-testing-ksp:1.4.8")
+    testImplementation("com.github.tschuchortdev:kotlin-compile-testing:1.4.9")
+    testImplementation("com.github.tschuchortdev:kotlin-compile-testing-ksp:1.4.9")
     implementation(kotlin("reflect"))
 
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += "-Xopt-in=com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview"
+    kotlinOptions.freeCompilerArgs += "-opt-in=com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview"
 }

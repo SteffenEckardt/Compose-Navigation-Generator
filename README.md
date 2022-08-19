@@ -7,3 +7,6 @@
 </h1>
 
 ## TODO
+- [ ] Auto-Inject NavHostController
+- [ ] Use correct target package
+- [ ] Catch error cases (e.g. incompatible NavArgs)

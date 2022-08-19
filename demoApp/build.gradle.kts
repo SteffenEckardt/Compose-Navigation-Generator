@@ -1,11 +1,16 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
 }
 
 val composeVersion: String by project
 val navVersion: String by project
+val kspVersion: String by project
 
+ksp {
+    arg("verbose", "true")
+}
 
 android {
     namespace = "de.se.cng"
@@ -51,6 +56,9 @@ android {
 }
 
 dependencies {
+    implementation(project(":annotation"))
+    ksp(project(path = ":processor", configuration = "default"))
+
     implementation("androidx.core:core-ktx:1.8.0")
     implementation("com.google.android.material:material:1.6.1")
     implementation("androidx.activity:activity-compose:1.5.1")
