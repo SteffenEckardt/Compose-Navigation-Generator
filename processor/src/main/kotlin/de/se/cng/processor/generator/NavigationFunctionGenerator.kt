@@ -1,18 +1,36 @@
 package de.se.cng.processor.generator
 
-import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterSpec
 import de.se.cng.processor.models.NavigationDestination
 import de.se.cng.processor.models.NavigationParameter
 
-fun generateNavigationExtensionFunction(destination: NavigationDestination): FunSpec {
+private const val FileName = "NavigationFunctions"
+private val navigationFunctionImports = listOf(
+    Pair("androidx.compose.runtime", "Composable"),
+    Pair("androidx.navigation", "NavHostController"),
+)
+
+fun generateNavigationExtensionsFile(packageName: String, destinations: List<NavigationDestination>) = with(FileSpec.builder(packageName, FileName))
+{
+    navigationFunctionImports.forEach { import ->
+        addImport(packageName = import.first, import.second)
+    }
+    destinations.forEach { destination ->
+        addFunction(generateNavigationExtensionFunction(destination))
+    }
+    //addProperty(loggingTag(FileName))
+    build()
+}
+
+
+private fun generateNavigationExtensionFunction(destination: NavigationDestination): FunSpec {
     val functionParameters = destination.parameters.map { parameter -> navigationFunctionParameters(parameter) }
     val actualName = if (destination.customName.isNullOrEmpty()) destination.actualName else destination.customName
-    val navHostController = ClassName("androidx.navigation", "NavHostController")
 
     return with(FunSpec.builder("navigateTo$actualName")) {
-        receiver(navHostController)
+        receiver(TypeNames.Classes.NavHostController)
         addNavigationFunctionBody(destination)
         addParameters(functionParameters)
         build()
@@ -20,7 +38,7 @@ fun generateNavigationExtensionFunction(destination: NavigationDestination): Fun
 }
 
 private fun navigationFunctionParameters(parameter: NavigationParameter) = ParameterSpec
-    .builder(parameter.name, ClassName(parameter.typePackage, parameter.typeName).copy(nullable = parameter.isNullable))
+    .builder(parameter.name, parameter.className.copy(nullable = parameter.isNullable))
     .build()
 
 private fun FunSpec.Builder.addNavigationFunctionBody(destination: NavigationDestination) = with(this) {

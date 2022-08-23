@@ -26,7 +26,7 @@ class FunctionDeclarationVisitor : KSEmptyVisitor<Unit, NavigationDestination>()
                 val type = it.type.resolve()
                 val className = type.toClassName()
 
-                NavigationParameter(name, className.simpleName, className.packageName, type.isMarkedNullable)
+                NavigationParameter(name, className, type.isMarkedNullable)
             }
 
         return NavigationDestination(actualName = destinationName, actualPackage = destinationPackage, parameters = destinationParameters)

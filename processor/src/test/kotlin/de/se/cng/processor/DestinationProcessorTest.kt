@@ -41,10 +41,11 @@ class DestinationProcessorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables.kt",
                 """
-                package de.todo                
+                package de.se.cng                
                 
                 import androidx.compose.runtime.Composable
-                import de.se.cng.annotation.*
+                import de.se.cng.annotation.Destination
+                import de.se.cng.annotation.Home
                 
                 @Composable
                 @Home
@@ -59,7 +60,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
             assertEquals(KotlinCompilation.ExitCode.OK, compilationResult.exitCode)
 
             val expected = """
-            package de.todo
+            package de.se.cng
             
             import android.util.Log
             import androidx.compose.runtime.Composable
@@ -96,7 +97,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables.kt",
                 """
-                package de.todo                
+                package de.se.cng                
                 
                 import de.se.cng.annotation.*
                 import androidx.compose.runtime.Composable
@@ -114,7 +115,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
             assertEquals(KotlinCompilation.ExitCode.OK, compilationResult.exitCode)
 
             val expected = """
-            package de.todo
+            package de.se.cng
             
             import android.util.Log
             import androidx.compose.runtime.Composable
@@ -155,11 +156,9 @@ class DestinationProcessorTest : ProcessorTestBase() {
         @Test
         fun `setup for 1 destination with 1 nullable argument`() {
 
-            // TODO: Continue here
-
             val kotlinSource = SourceFile.kotlin("Composables.kt",
                 """
-                package de.todo                
+                package de.se.cng                
                 
                 import de.se.cng.annotation.*
                 import androidx.compose.runtime.Composable
@@ -177,7 +176,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
             assertEquals(KotlinCompilation.ExitCode.OK, compilationResult.exitCode)
 
             val expected = """
-            package de.todo
+            package de.se.cng
             
             import android.util.Log
             import androidx.compose.runtime.Composable
@@ -221,7 +220,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
             val kotlinSource = listOf(
                 SourceFile.kotlin("Composables1.kt",
                     """
-                package de.todo                
+                package de.se.cng                
                 
                 import de.se.cng.annotation.*
                 import androidx.compose.runtime.Composable
@@ -236,7 +235,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
                 ),
                 SourceFile.kotlin("Composables2.kt",
                     """
-                package de.todo                
+                package de.se.cng                
                 
                 import de.se.cng.annotation.*
                 import androidx.compose.runtime.Composable
@@ -254,7 +253,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
             assertEquals(KotlinCompilation.ExitCode.OK, compilationResult.exitCode)
 
             val expected = """
-            package de.todo
+            package de.se.cng
             
             import android.util.Log
             import androidx.compose.runtime.Composable
@@ -296,7 +295,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
             val kotlinSource = listOf(
                 SourceFile.kotlin("Composables1.kt",
                     """
-                package de.todo                
+                package de.se.cng                
                 
                 import de.se.cng.annotation.*
                 import androidx.compose.runtime.Composable
@@ -311,7 +310,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
                 ),
                 SourceFile.kotlin("Composables2.kt",
                     """
-                package de.todo                
+                package de.se.cng                
                 
                 import de.se.cng.annotation.*
                 import androidx.compose.runtime.Composable
@@ -329,7 +328,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
             assertEquals(KotlinCompilation.ExitCode.OK, compilationResult.exitCode)
 
             val expected = """
-            package de.todo
+            package de.se.cng
             
             import android.util.Log
             import androidx.compose.runtime.Composable
@@ -384,7 +383,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
             val kotlinSource = listOf(
                 SourceFile.kotlin("Composables1.kt",
                     """
-                package de.todo                
+                package de.se.cng                
                 
                 import de.se.cng.annotation.*
                 import androidx.compose.runtime.Composable
@@ -399,7 +398,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
                 ),
                 SourceFile.kotlin("Composables2.kt",
                     """
-                package de.todo                
+                package de.se.cng                
                 
                 import de.se.cng.annotation.*
                 import androidx.compose.runtime.Composable
@@ -413,7 +412,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
                 ),
                 SourceFile.kotlin("Composables3.kt",
                     """
-                package de.todo                
+                package de.se.cng                
                 
                 import de.se.cng.annotation.*
                 import androidx.compose.runtime.Composable
@@ -427,7 +426,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
                 ),
                 SourceFile.kotlin("Composables4.kt",
                     """
-                package de.todo                
+                package de.se.cng                
                 
                 import de.se.cng.annotation.*
                 import androidx.compose.runtime.Composable
@@ -441,7 +440,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
                 ),
                 SourceFile.kotlin("Composables5.kt",
                     """
-                package de.todo                
+                package de.se.cng                
                 
                 import de.se.cng.annotation.*
                 import androidx.compose.runtime.Composable
@@ -459,7 +458,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
             assertEquals(KotlinCompilation.ExitCode.OK, compilationResult.exitCode)
 
             val expected = """
-            package de.todo
+            package de.se.cng
             
             import android.util.Log
             import androidx.compose.runtime.Composable
@@ -547,7 +546,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables.kt",
                 """
-            package de.todo                
+            package de.se.cng                
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable
@@ -565,14 +564,14 @@ class DestinationProcessorTest : ProcessorTestBase() {
             assertEquals(KotlinCompilation.ExitCode.OK, compilationResult.exitCode)
 
             val expected = """
-            package de.todo                
+            package de.se.cng                
 
             import androidx.compose.runtime.Composable
-            import androidx.navigation.NavHost
+            import androidx.navigation.NavHostController
             import kotlin.Unit
 
-            public fun NavHost.navigateToHomeDestination(): Unit {
-              navController.navigate("HomeDestination")
+            public fun NavHostController.navigateToHomeDestination(): Unit {
+              navigate("HomeDestination")
             }
             """.trimIndent()
             assertSourceEquals(
@@ -586,7 +585,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables.kt",
                 """
-                package de.todo                
+                package de.se.cng                
                 
                 import de.se.cng.annotation.*
                 import androidx.compose.runtime.Composable
@@ -604,15 +603,15 @@ class DestinationProcessorTest : ProcessorTestBase() {
             assertEquals(KotlinCompilation.ExitCode.OK, compilationResult.exitCode)
 
             val expected = """
-            package de.todo                
+            package de.se.cng                
 
             import androidx.compose.runtime.Composable
-            import androidx.navigation.NavHost
+            import androidx.navigation.NavHostController
             import kotlin.String
             import kotlin.Unit
 
-            public fun NavHost.navigateToHomeDestination(name: String): Unit {
-                navController.navigate("HomeDestination/${'$'}name")
+            public fun NavHostController.navigateToHomeDestination(name: String): Unit {
+                navigate("HomeDestination/${'$'}name")
             }
             """.trimIndent()
             assertSourceEquals(
@@ -626,7 +625,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables.kt",
                 """
-                package de.todo                
+                package de.se.cng                
                 
                 import de.se.cng.annotation.*
                 import androidx.compose.runtime.Composable
@@ -644,15 +643,15 @@ class DestinationProcessorTest : ProcessorTestBase() {
             assertEquals(KotlinCompilation.ExitCode.OK, compilationResult.exitCode)
 
             val expected = """
-            package de.todo                
+            package de.se.cng                
 
             import androidx.compose.runtime.Composable
-            import androidx.navigation.NavHost
+            import androidx.navigation.NavHostController
             import kotlin.String
             import kotlin.Unit
 
-            public fun NavHost.navigateToHomeDestination(name: String?): Unit {
-                navController.navigate("HomeDestination?arg_name=${'$'}name")
+            public fun NavHostController.navigateToHomeDestination(name: String?): Unit {
+                navigate("HomeDestination?arg_name=${'$'}name")
             }
             """.trimIndent()
             assertSourceEquals(
@@ -666,7 +665,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables.kt",
                 """
-                package de.todo                
+                package de.se.cng                
                 
                 import de.se.cng.annotation.*
                 import androidx.compose.runtime.Composable
@@ -684,21 +683,21 @@ class DestinationProcessorTest : ProcessorTestBase() {
             assertEquals(KotlinCompilation.ExitCode.OK, compilationResult.exitCode)
 
             val expected = """
-            package de.todo
+            package de.se.cng
 
             import androidx.compose.runtime.Composable
-            import androidx.navigation.NavHost
+            import androidx.navigation.NavHostController
             import kotlin.Double
             import kotlin.Int
             import kotlin.String
             import kotlin.Unit
 
-            public fun NavHost.navigateToHomeDestination(
+            public fun NavHostController.navigateToHomeDestination(
               name: String,
               age: Int,
               height: Double,
             ): Unit {
-              navController.navigate("HomeDestination/${'$'}name/${'$'}age/${'$'}height")
+              navigate("HomeDestination/${'$'}name/${'$'}age/${'$'}height")
             }
             """.trimIndent()
             assertSourceEquals(
@@ -712,7 +711,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables.kt",
                 """
-                package de.todo                
+                package de.se.cng                
                 
                 import de.se.cng.annotation.*
                 import androidx.compose.runtime.Composable
@@ -730,21 +729,21 @@ class DestinationProcessorTest : ProcessorTestBase() {
             assertEquals(KotlinCompilation.ExitCode.OK, compilationResult.exitCode)
 
             val expected = """
-            package de.todo
+            package de.se.cng
 
             import androidx.compose.runtime.Composable
-            import androidx.navigation.NavHost
+            import androidx.navigation.NavHostController
             import kotlin.Double
             import kotlin.Int
             import kotlin.String
             import kotlin.Unit
             
-            public fun NavHost.navigateToHomeDestination(
+            public fun NavHostController.navigateToHomeDestination(
               name: String?,
               age: Int?,
               height: Double?,
             ): Unit {
-              navController.navigate("HomeDestination?arg_name=${'$'}name&arg_age=${'$'}age&arg_height=${'$'}height")
+              navigate("HomeDestination?arg_name=${'$'}name&arg_age=${'$'}age&arg_height=${'$'}height")
             }
             """.trimIndent()
             assertSourceEquals(
@@ -758,7 +757,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables.kt",
                 """
-                package de.todo                
+                package de.se.cng                
                 
                 import de.se.cng.annotation.*
                 import androidx.compose.runtime.Composable
@@ -776,23 +775,23 @@ class DestinationProcessorTest : ProcessorTestBase() {
             assertEquals(KotlinCompilation.ExitCode.OK, compilationResult.exitCode)
 
             val expected = """
-            package de.todo                
+            package de.se.cng                
 
             import androidx.compose.runtime.Composable
-            import androidx.navigation.NavHost
+            import androidx.navigation.NavHostController
             import kotlin.String
             import kotlin.Double
             import kotlin.Float
             import kotlin.Int
             import kotlin.Unit
 
-            public fun NavHost.navigateToHomeDestination(
+            public fun NavHostController.navigateToHomeDestination(
                 name: String?,
                 age: Int,
                 height: Double?,
                 weight: Float,
             ): Unit {
-                navController.navigate("HomeDestination?arg_name=${'$'}name&arg_age=${'$'}age&arg_height=${'$'}height&arg_weight=${'$'}weight")
+                navigate("HomeDestination?arg_name=${'$'}name&arg_age=${'$'}age&arg_height=${'$'}height&arg_weight=${'$'}weight")
             }
             """.trimIndent()
 
@@ -807,7 +806,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables.kt",
                 """
-            package de.todo                
+            package de.se.cng                
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable
@@ -830,18 +829,18 @@ class DestinationProcessorTest : ProcessorTestBase() {
             assertEquals(KotlinCompilation.ExitCode.OK, compilationResult.exitCode)
 
             val expected = """
-            package de.todo                
+            package de.se.cng                
             
             import androidx.compose.runtime.Composable
-            import androidx.navigation.NavHost
+            import androidx.navigation.NavHostController
             import kotlin.Unit
             
-            public fun NavHost.navigateToHomeDestination(): Unit {
-              navController.navigate("HomeDestination")
+            public fun NavHostController.navigateToHomeDestination(): Unit {
+              navigate("HomeDestination")
             }
             
-            public fun NavHost.navigateToDetailDestination(): Unit {
-              navController.navigate("DetailDestination")
+            public fun NavHostController.navigateToDetailDestination(): Unit {
+              navigate("DetailDestination")
             }
             """.trimIndent()
             assertSourceEquals(
@@ -855,7 +854,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables.kt",
                 """
-                package de.todo                
+                package de.se.cng                
                 
                 import de.se.cng.annotation.*
                 import androidx.compose.runtime.Composable
@@ -879,20 +878,20 @@ class DestinationProcessorTest : ProcessorTestBase() {
             assertEquals(KotlinCompilation.ExitCode.OK, compilationResult.exitCode)
 
             val expected = """
-            package de.todo                
+            package de.se.cng                
 
             import androidx.compose.runtime.Composable
-            import androidx.navigation.NavHost
+            import androidx.navigation.NavHostController
             import kotlin.Int
             import kotlin.String
             import kotlin.Unit
 
-            public fun NavHost.navigateToHomeDestination(name: String): Unit {
-                navController.navigate("HomeDestination/${'$'}name")
+            public fun NavHostController.navigateToHomeDestination(name: String): Unit {
+                navigate("HomeDestination/${'$'}name")
             }
 
-            public fun NavHost.navigateToDetailDestination(age: Int): Unit {
-                navController.navigate("DetailDestination/${'$'}age")
+            public fun NavHostController.navigateToDetailDestination(age: Int): Unit {
+                navigate("DetailDestination/${'$'}age")
             }
             """.trimIndent()
             assertSourceEquals(
@@ -906,7 +905,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables.kt",
                 """
-                package de.todo                
+                package de.se.cng                
                 
                 import de.se.cng.annotation.*
                 import androidx.compose.runtime.Composable
@@ -930,20 +929,20 @@ class DestinationProcessorTest : ProcessorTestBase() {
             assertEquals(KotlinCompilation.ExitCode.OK, compilationResult.exitCode)
 
             val expected = """
-            package de.todo                
+            package de.se.cng                
             
             import androidx.compose.runtime.Composable
-            import androidx.navigation.NavHost
+            import androidx.navigation.NavHostController
             import kotlin.Int
             import kotlin.String
             import kotlin.Unit
                        
-            public fun NavHost.navigateToHomeDestination(name: String?): Unit {
-                navController.navigate("HomeDestination?arg_name=${'$'}name")
+            public fun NavHostController.navigateToHomeDestination(name: String?): Unit {
+                navigate("HomeDestination?arg_name=${'$'}name")
             }     
 
-            public fun NavHost.navigateToDetailDestination(age: Int?): Unit {
-                navController.navigate("DetailDestination?arg_age=${'$'}age")
+            public fun NavHostController.navigateToDetailDestination(age: Int?): Unit {
+                navigate("DetailDestination?arg_age=${'$'}age")
             }
             """.trimIndent()
             assertSourceEquals(

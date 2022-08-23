@@ -1,5 +1,6 @@
 val navVersion: String by project
 val kspVersion: String by project
+val composeVersion: String by project
 
 plugins {
     kotlin("jvm")
@@ -26,15 +27,17 @@ dependencies {
     // (Required) Writing and executing Unit Tests on the JUnit Platform
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
-
-    // (Optional) If you need "Parameterized Tests"
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.0")
 
     testImplementation("com.github.tschuchortdev:kotlin-compile-testing:1.4.9")
     testImplementation("com.github.tschuchortdev:kotlin-compile-testing-ksp:1.4.9")
     implementation(kotlin("reflect"))
-
 }
+
+tasks.test {
+    useJUnitPlatform()
+}
+
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     kotlinOptions.freeCompilerArgs += "-opt-in=com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview"

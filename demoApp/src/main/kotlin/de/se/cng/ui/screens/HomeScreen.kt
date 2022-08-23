@@ -29,7 +29,5 @@ fun Home2() = Column(Modifier.fillMaxSize(), horizontalAlignment = CenterHorizon
 }
 
 
-@Composable
-fun asdsd(navHostController: NavHostController) {
 
-}
+

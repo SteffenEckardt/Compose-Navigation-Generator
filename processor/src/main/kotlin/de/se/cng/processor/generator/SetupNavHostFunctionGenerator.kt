@@ -6,17 +6,34 @@ import de.se.cng.processor.extensions.requireNotNull
 import de.se.cng.processor.models.NavigationDestination
 import de.se.cng.processor.models.NavigationParameter
 
-/**
- * TODO:
- *  - Recognize navHostController parameter and autoinject
- */
+private const val Parameter_NavHostController = "navController"
+private const val FileName = "NavHost"
+private val navHostImports = listOf(
+    Pair("android.util", "Log"),
+    Pair("androidx.compose.runtime", "Composable"),
+    Pair("androidx.navigation", "NavHostController"),
+    Pair("androidx.navigation", "navArgument"),
+    Pair("androidx.navigation", "NavType"),
+    Pair("androidx.navigation.compose", "NavHost"),
+    Pair("androidx.navigation.compose", "composable"),
+    Pair("androidx.navigation.compose", "composable"),
+)
 
-fun generateSetupFunction(destinations: List<NavigationDestination>): FunSpec = with(FunSpec.builder("SetupNavHost")) {
+fun generateSetupFile(`package`: String, destinations: List<NavigationDestination>) = with(FileSpec.builder("de.se.cng", FileName)) {
+    navHostImports.forEach { import ->
+        addImport(packageName = import.first, import.second)
+    }
+    addFunction(generateSetupFunction(destinations))
+    addProperty(loggingTag(FileName))
+
+    build()
+}
+
+private fun generateSetupFunction(destinations: List<NavigationDestination>): FunSpec = with(FunSpec.builder("SetupNavHost")) {
     val composableAnnotation = ClassName("androidx.compose.runtime", "Composable")
-    val navHostController = ClassName("androidx.navigation", "NavHostController")
 
     addAnnotation(composableAnnotation)
-    addParameter("navController", navHostController)
+    addParameter(Parameter_NavHostController, TypeNames.Classes.NavHostController)
     setupBody(destinations)
     build()
 }
@@ -35,7 +52,7 @@ private fun FunSpec.Builder.setupBody(destinations: List<NavigationDestination>)
     val homeDestinationRouteTemplate = navRouteTemplate(homeDestination)
     val navHost = MemberName("androidx.navigation.compose", "NavHost")
 
-    addStatement("%M(navController = %L, startDestination = %S)", navHost, "navController", homeDestinationRouteTemplate)
+    addStatement("%M(navController = %L, startDestination = %S)", navHost, Parameter_NavHostController, homeDestinationRouteTemplate)
     beginControlFlow("{")
     destinations.forEach { destination ->
         composableCall(destination)
@@ -54,16 +71,17 @@ private fun FunSpec.Builder.setupBody(destinations: List<NavigationDestination>)
 private fun FunSpec.Builder.composableCall(destination: NavigationDestination) = with(this) {
     val navRouteTemplate = navRouteTemplate(destination)
     val navHost = MemberName("androidx.navigation.compose", "composable")
+    val parameters = destination.parameters.filterNot { it.className == TypeNames.Classes.NavHostController } // Do not treat NavHostController as NavArg!
 
-    if (destination.parameters.isEmpty()) {
+    if (parameters.isEmpty()) {
         beginControlFlow("%M(%S)", navHost, navRouteTemplate)
     } else {
         addStatement("%M(%S, arguments = listOf(", navHost, navRouteTemplate)
-        destination.parameters.forEach { navigationParameter ->
+        parameters.forEach { navigationParameter ->
             addNavArgument(navigationParameter)
         }
         beginControlFlow(")) { backStackEntry ->")
-        addNavParametersGetters(destination.parameters)
+        addNavParametersGetters(parameters)
     }
 
     addLogDebugCall("Navigating to ${destination.actualName}")
@@ -75,8 +93,7 @@ private fun FunSpec.Builder.composableCall(destination: NavigationDestination) =
 private fun FunSpec.Builder.addNavArgument(navigationParameter: NavigationParameter) = with(this) {
     val name = navigationParameter.name
     val isNullable = navigationParameter.isNullable
-    val typeName = navigationParameter.typeName
-    val typePackage = navigationParameter.typePackage
+    val className = navigationParameter.className
 
     val navArgument = MemberName("androidx.navigation", "navArgument")
     addCode(buildCodeBlock {
@@ -84,7 +101,7 @@ private fun FunSpec.Builder.addNavArgument(navigationParameter: NavigationParame
             addStatement("%M(\"arg%L\"){", navArgument, name.pascalcase())
             withIndent {
                 addStatement("nullable = %L", isNullable)
-                addStatement("type = NavType.fromArgType(%S,%S)", typeName, typePackage)
+                addStatement("type = NavType.fromArgType(%S,%S)", className.simpleName, className.packageName)
             }
             addStatement("},")
         }
@@ -110,7 +127,7 @@ private fun navRouteTemplate(navigationDestination: NavigationDestination): Stri
 }
 
 private fun FunSpec.Builder.addNavParametersGetters(parameters: List<NavigationParameter>) = with(this) {
-    fun mapParameterToGetter(packageName: String, simpleName: String) = when ("$packageName.$simpleName") {
+    fun mapParameterToGetter(className: ClassName) = when (className.canonicalName) {
         "kotlin.String"  -> "getString"
         "kotlin.Int"     -> "getInt"
         "kotlin.Double"  -> "getDouble"
@@ -121,7 +138,7 @@ private fun FunSpec.Builder.addNavParametersGetters(parameters: List<NavigationP
 
     parameters.forEach { parameter ->
         val parameterName = parameter.name.pascalcase()
-        val parameterGetter = mapParameterToGetter(parameter.typePackage, parameter.typeName)
+        val parameterGetter = mapParameterToGetter(parameter.className)
 
         addStatement("val arg%L = backStackEntry.arguments?.%L(\"arg%L\")", parameterName, parameterGetter, parameterName)
     }
@@ -129,13 +146,23 @@ private fun FunSpec.Builder.addNavParametersGetters(parameters: List<NavigationP
 
 private fun FunSpec.Builder.targetCall(destination: NavigationDestination) = with(this) {
     val destinationName = MemberName(destination.actualPackage, destination.actualName)
-    val arguments = destination.parameters.joinToString { "${it.name}=arg${it.name.pascalcase()}" }
+    val arguments = destination.parameters
+        .filterNot { it.className == TypeNames.Classes.NavHostController }
+        .joinToString { "${it.name}=arg${it.name.pascalcase()}" }
 
-    addStatement("%M(%L)", destinationName, arguments)
+    if (destination.parameters.any { it.className == TypeNames.Classes.NavHostController }) {
+        val navHostControllerArgName = destination.parameters.single { it.className == TypeNames.Classes.NavHostController }.name
+        addStatement("%M(%L=%L,%L)", navHostControllerArgName, Parameter_NavHostController, destinationName, arguments)
+    } else {
+        addStatement("%M(%L)", destinationName, arguments)
+    }
+
 }
-
 
 private fun FunSpec.Builder.addLogDebugCall(message: String) = with(this) {
     addStatement("Log.d(TAG, \"%L\")", message)
 }
+
+
+
 
