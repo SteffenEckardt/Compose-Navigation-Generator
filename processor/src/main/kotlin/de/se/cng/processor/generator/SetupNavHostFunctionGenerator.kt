@@ -142,6 +142,12 @@ private fun FunSpec.Builder.addNavParametersGetters(parameters: List<NavigationP
 
         addStatement("val arg%L = backStackEntry.arguments?.%L(\"arg%L\")", parameterName, parameterGetter, parameterName)
     }
+
+    parameters.filterNot { it.isNullable }.forEach { parameter ->
+        val parameterName = parameter.name.pascalcase()
+
+        addStatement("requireNotNull(arg%L)", parameterName)
+    }
 }
 
 private fun FunSpec.Builder.targetCall(destination: NavigationDestination) = with(this) {

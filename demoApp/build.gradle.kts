@@ -8,10 +8,6 @@ val composeVersion: String by project
 val navVersion: String by project
 val kspVersion: String by project
 
-ksp {
-    arg("verbose", "true")
-}
-
 android {
     namespace = "de.se.cng"
     compileSdk = 32
@@ -51,6 +47,20 @@ android {
     packagingOptions {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
+    ksp {
+        arg("verbose", "true")
+    }
+
+    android.applicationVariants.all {
+        kotlin {
+            sourceSets {
+                getByName(name) {
+                    kotlin.srcDir("build/generated/ksp/$name/kotlin")
+                }
+            }
         }
     }
 }

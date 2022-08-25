@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import de.se.cng.annotation.*
+import de.se.cng.navigateToHome2
 import de.se.cng.ui.navigation.NavigationDestination.*
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
@@ -27,7 +28,3 @@ fun HomeScreen(navHostController: NavHostController) = TemplateScreen(
 fun Home2() = Column(Modifier.fillMaxSize(), horizontalAlignment = CenterHorizontally, verticalArrangement = Arrangement.Center) {
     Text(text = "HOME")
 }
-
-
-
-
