@@ -6,14 +6,14 @@
     Compose/Navigation/Generator
 </h1>
 
-> :warning: This library is still under development and not considered stable! 
+> :warning: This library is still under development and not considered stable!
 
 ### Content  <!-- omit in toc -->
 - [Introduction](#introduction)
 - [Usage](#usage)
-  - [Example: Single destination without parameters](#example-single-destination-without-parameters)
-  - [Example: Multiple destinations without parameters](#example-multiple-destinations-without-parameters)
-  - [Example: Multiple destinations with parameters](#example-multiple-destinations-with-parameters)
+    - [Example: Single destination without parameters](#example-single-destination-without-parameters)
+    - [Example: Multiple destinations without parameters](#example-multiple-destinations-without-parameters)
+    - [Example: Multiple destinations with parameters](#example-multiple-destinations-with-parameters)
 - [Features](#features)
 - [Setup](#setup)
 - [Bugs](#bugs)
@@ -93,7 +93,7 @@ A single destination without parameters. The function is annotated with `@Destin
 
 The `SetupNavHost` function itself is a composable function and should be called during initialization of the composeable scope. Usualy this is done during setup of the parent compose activity. The function takes a `NavHostController` as parameter, which can also be passed on to composables, if required.
 
-The `navHostController.navigateTo<<Destination>>()` function is created for every destination and extends the existing `NavHostController` class. It can therefore be used from everywhere, a `NavHostController` is available. 
+The `navHostController.navigateTo<<Destination>>()` function is created for every destination and extends the existing `NavHostController` class. It can therefore be used from everywhere, a `NavHostController` is available.
 
 <details>
   <summary>Generated</summary>
@@ -189,7 +189,7 @@ public fun NavHostController.navigateToHomeScreen(): Unit {
 
 <details>
   <summary>Usage</summary>
-  
+
 ```kotlin
 @Composable
 fun SomeComposableFunction(navController: NavHostController) {
@@ -201,7 +201,7 @@ fun SomeComposableFunction(navController: NavHostController) {
 
 ### Example: Multiple destinations with parameters
 
-***C/N/G*** supports nullable- and non-nullable parameters as navigation arguments. 
+***C/N/G*** supports nullable- and non-nullable parameters as navigation arguments.
 
 If a destination only useses non-nullable parameters, a "non-nullable" navigation path will be generated:
 ```kotlin
@@ -359,8 +359,8 @@ val navigationPath = "Destination?arg1&arg2&arg3" // ...
 *Lots...*
 
 ## Used Libraries
-- [KSP](https://github.com/google/ksp) 
-- [Auto-Service-KSP](https://github.com/ZacSweers/auto-service-ksp) 
+- [KSP](https://github.com/google/ksp)
+- [Auto-Service-KSP](https://github.com/ZacSweers/auto-service-ksp)
 - [KotlinPoet](https://square.github.io/kotlinpoet/) :heart:
 - [Kotlin Compile Testing](https://github.com/tschuchortdev/kotlin-compile-testing)
 - [Jetpack Compose](https://developer.android.com/jetpack/compose) 
