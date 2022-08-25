@@ -43,7 +43,9 @@ fun HomeScreen() {
         /*...*/
     }
 }
+```
 
+```kotlin
 /***** GENERATED *****/
 // A setup function for compose-navigaiton is generated, using your destinations
 @Composable
@@ -62,7 +64,9 @@ public fun SetupNavHost(navController: NavHostController): Unit {
 public fun NavHostController.navigateToHomeScreen(): Unit {
   navigate("HomeScreen")
 }
+```
 
+```kotlin
 // The destination can be navigated to from every composable function, using the NavHostController
 @Composable
 fun SomeComposableFunction(navController: NavHostController) {
