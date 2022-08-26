@@ -22,7 +22,7 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
       - name: Clean
-        run: ./gradlew clean
+        run: ./gradlew :processor:clean
       - name: Build
         run: ./gradlew :processor:build -x test
       - name: Test
@@ -40,6 +40,6 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
-      - name: Test
+      - name: Publish to GHPR
         run: ./gradlew :processor:publish
 

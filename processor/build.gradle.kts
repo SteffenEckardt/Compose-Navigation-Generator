@@ -41,6 +41,7 @@ publishing {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/SteffenEckardt/Compose-Navigation-Generator")
             credentials {
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
                 password = project.findProperty("gpr.token") as String? ?: System.getenv("TOKEN")
             }
         }
