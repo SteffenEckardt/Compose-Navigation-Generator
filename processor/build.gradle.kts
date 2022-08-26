@@ -35,6 +35,9 @@ dependencies {
     implementation(kotlin("reflect"))
 }
 
+group = "de.se.cng"
+version = "0.0.1-alpha" // TODO: Update programmatically
+
 publishing {
     repositories {
         maven {
