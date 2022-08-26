@@ -22,9 +22,9 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
       - name: Clean
-        run: gradlew clean
+        run: ./gradlew clean
       - name: Build
-        run: gradlew :processor:build -x test
+        run: ./gradlew :processor:build -x test
       - name: Test
-        run: gradlew :processor:test
+        run: ./gradlew :processor:test
 
