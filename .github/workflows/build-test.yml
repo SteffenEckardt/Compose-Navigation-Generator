@@ -10,26 +10,27 @@ permissions:
   contents: read
 
 jobs:
-  #build-processor:
-#
-  #  runs-on: ubuntu-latest
-#
-  #  steps:
-  #    - uses: actions/checkout@v3
-  #    - name: Set up JDK 11
-  #      uses: actions/setup-java@v3
-  #      with:
-  #        java-version: '11'
-  #        distribution: 'temurin'
-  #    - name: Clean
-  #      run: ./gradlew :processor:clean
-  #    - name: Build
-  #      run: ./gradlew :processor:build -x test
-  #    - name: Test
-  #      run: ./gradlew :processor:test
+  build-processor:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+      - name: Clean
+        run: ./gradlew :processor:clean
+      - name: Build
+        run: ./gradlew :processor:build -x test
+      - name: Test
+        run: ./gradlew :processor:test
 
   publish-package:
-    #needs: build-processor
+    if: github.ref_name == 'main'
+    needs: build-processor
 
     runs-on: ubuntu-latest
 
