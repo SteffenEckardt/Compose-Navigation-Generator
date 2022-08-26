@@ -21,12 +21,8 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
-      - name: Clean
-        run: ./gradlew :processor:clean
       - name: Build
-        run: ./gradlew :processor:build -x test
-      - name: Test
-        run: ./gradlew :processor:test
+        run: ./gradlew :processor:build
 
   publish-package:
     if: github.ref_name == 'main'
