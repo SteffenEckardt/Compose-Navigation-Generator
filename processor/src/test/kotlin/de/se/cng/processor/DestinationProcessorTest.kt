@@ -1,3 +1,13 @@
+/*
+    Why are these warnings ignored?
+    ======================================================================================
+    "RedundantVisibilityModifier"   -> KotlinPoet generates explicit public functions.
+    "RedundantUnitReturnType"       -> KotlinPoet generates explicit Unit return type.
+    "TestFunctionName"              -> Compose functions start with an uppercase Letter.
+    "unused"                        -> Navigation functions are not called in test context.
+*/
+@file:Suppress("RedundantVisibilityModifier", "TestFunctionName", "RedundantUnitReturnType", "unused")
+
 package de.se.cng.processor
 
 import com.tschuchort.compiletesting.KotlinCompilation
@@ -14,7 +24,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
     fun `ignores non marked functions`() {
 
         val kotlinSource = SourceFile.kotlin("FirstScreen.kt",
-            """package mypackage.ui.screens.first
+            """package app.ui.screens.first
         
                 import androidx.compose.runtime.Composable
                 import de.se.cng.annotation.Destination
@@ -526,7 +536,6 @@ class DestinationProcessorTest : ProcessorTestBase() {
             )
         }
 
-
         @Test
         fun `setup for 5 destination with different arguments`() {
 
@@ -693,6 +702,96 @@ class DestinationProcessorTest : ProcessorTestBase() {
     @DisplayName("Navigation function Generator")
     @Nested
     inner class NavigationFunctionGenerator {
+
+        @Test
+        fun `ignore single NavHostController parameter`() {
+
+            val kotlinSource = SourceFile.kotlin("Composables.kt",
+                """
+            package de.se.cng                
+            
+            import androidx.navigation.NavHostController
+            import de.se.cng.annotation.*
+            import androidx.compose.runtime.Composable
+            
+            @Composable
+            @Home
+            @Destination
+            fun HomeDestination(navController: NavHostController) {
+            
+            }
+            """.trimIndent()
+            )
+
+            val compilationResult = compile(kotlinSource)
+            assertEquals(KotlinCompilation.ExitCode.OK, compilationResult.exitCode)
+
+            val expected = """
+            package de.se.cng                
+
+            import androidx.compose.runtime.Composable
+            import androidx.navigation.NavHostController
+            import kotlin.Unit
+
+            public fun NavHostController.navigateToHomeDestination(): Unit {
+              navigate("HomeDestination")
+            }
+            """.trimIndent()
+            assertSourceEquals(
+                expected,
+                compilationResult.sourceFor("NavigationFunctions.kt")
+            )
+        }
+
+        @Test
+        fun `ignore NavHostController as one of multiple parameters`() {
+
+            val kotlinSource = SourceFile.kotlin("Composables.kt",
+                """
+                package de.se.cng                
+                
+                import androidx.navigation.NavHostController
+                import de.se.cng.annotation.*
+                import androidx.compose.runtime.Composable
+                
+                @Composable
+                @Home
+                @Destination
+                fun HomeDestination(name: String?, age: Int, navHostController: NavHostController, height: Double?, weight: Float) {
+                
+                }
+                """.trimIndent()
+            )
+
+            val compilationResult = compile(kotlinSource)
+            assertEquals(KotlinCompilation.ExitCode.OK, compilationResult.exitCode)
+
+            val expected = """
+            package de.se.cng                
+            
+            import androidx.compose.runtime.Composable
+            import androidx.navigation.NavHostController
+            import kotlin.String
+            import kotlin.Double
+            import kotlin.Float
+            import kotlin.Int
+            import kotlin.Unit
+            
+            public fun NavHostController.navigateToHomeDestination(
+                name: String?,
+                age: Int,
+                height: Double?,
+                weight: Float,
+            ): Unit {
+                navigate("HomeDestination?arg_name=${'$'}name&arg_age=${'$'}age&arg_height=${'$'}height&arg_weight=${'$'}weight")
+            }
+            """.trimIndent()
+
+            assertSourceEquals(
+                expected,
+                compilationResult.sourceFor("NavigationFunctions.kt")
+            )
+        }
 
         @Test
         fun `generate 1 navigation function entry with no arguments`() {

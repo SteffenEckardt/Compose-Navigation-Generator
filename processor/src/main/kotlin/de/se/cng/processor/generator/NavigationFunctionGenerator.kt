@@ -3,6 +3,7 @@ package de.se.cng.processor.generator
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterSpec
+import de.se.cng.processor.extensions.filterNavHostController
 import de.se.cng.processor.models.NavigationDestination
 import de.se.cng.processor.models.NavigationParameter
 
@@ -26,7 +27,9 @@ fun generateNavigationExtensionsFile(packageName: String, destinations: List<Nav
 
 
 private fun generateNavigationExtensionFunction(destination: NavigationDestination): FunSpec {
-    val functionParameters = destination.parameters.map { parameter -> navigationFunctionParameters(parameter) }
+    val functionParameters = destination.parameters
+        .filterNavHostController()
+        .map { parameter -> navigationFunctionParameters(parameter) }
     val actualName = if (destination.customName.isNullOrEmpty()) destination.actualName else destination.customName
 
     return with(FunSpec.builder("navigateTo$actualName")) {
@@ -48,6 +51,7 @@ private fun FunSpec.Builder.addNavigationFunctionBody(destination: NavigationDes
 
 private fun navRouteActual(navigationDestination: NavigationDestination): String {
     val parameters = navigationDestination.parameters
+        .filterNavHostController()
     val destinationName = navigationDestination.actualName
 
     return when {

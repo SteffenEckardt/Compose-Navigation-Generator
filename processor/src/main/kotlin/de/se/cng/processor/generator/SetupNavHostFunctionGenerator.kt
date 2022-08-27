@@ -1,6 +1,7 @@
 package de.se.cng.processor.generator
 
 import com.squareup.kotlinpoet.*
+import de.se.cng.processor.extensions.filterNavHostController
 import de.se.cng.processor.extensions.pascalcase
 import de.se.cng.processor.extensions.requireNotNull
 import de.se.cng.processor.models.NavigationDestination
@@ -172,9 +173,5 @@ private fun FunSpec.Builder.targetCall(destination: NavigationDestination) = wit
 private fun FunSpec.Builder.addLogDebugCall(message: String) = with(this) {
     addStatement("Log.d(TAG, \"%L\")", message)
 }
-
-
-private fun Collection<NavigationParameter>.filterNavHostController() = this.filterNot { it.className == TypeNames.Classes.NavHostController }
-
 
 
