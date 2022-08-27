@@ -138,6 +138,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
                   },
                 )) { backStackEntry ->
                   val argName = backStackEntry.arguments?.getString("argName")
+                  requireNotNull(argName)
                   Log.d(TAG, "Navigating to HomeDestination")
                   HomeDestination(name=argName)
                 }
@@ -351,6 +352,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
                   },
                 )) { backStackEntry ->
                   val argName = backStackEntry.arguments?.getString("argName")
+                  requireNotNull(argName)
                   Log.d(TAG, "Navigating to HomeDestination")
                   HomeDestination(name=argName)
                 }
@@ -361,6 +363,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
                   },
                 )) { backStackEntry ->
                   val argAge = backStackEntry.arguments?.getInt("argAge")
+                  requireNotNull(argAge)
                   Log.d(TAG, "Navigating to DetailDestination")
                   DetailDestination(age=argAge)
                 }
@@ -472,58 +475,61 @@ class DestinationProcessorTest : ProcessorTestBase() {
             
             @Composable
             public fun SetupNavHost(navController: NavHostController): Unit {
-                NavHost(navController = navController, startDestination = "HomeDestination/argName")
-                {
-                    composable("HomeDestination/argName", arguments = listOf(
-                        navArgument("argName") {
-                            nullable = false
-                            type = NavType.fromArgType("String", "kotlin")
-                        },
-                    )) { backStackEntry ->
-                        val argName = backStackEntry.arguments?.getString("argName")
-                        Log.d(TAG, "Navigating to HomeDestination")
-                        HomeDestination(name = argName)
-                    }
-                    composable("DetailDestination/argAge", arguments = listOf(
-                        navArgument("argAge") {
-                            nullable = false
-                            type = NavType.fromArgType("Int", "kotlin")
-                        },
-                    )) { backStackEntry ->
-                        val argAge = backStackEntry.arguments?.getInt("argAge")
-                        Log.d(TAG, "Navigating to DetailDestination")
-                        DetailDestination(age = argAge)
-                    }
-                    composable("UltraDestination?argAge={age}&argFloat={float}", arguments = listOf(
-                        navArgument("argAge") {
-                            nullable = false
-                            type = NavType.fromArgType("Int", "kotlin")
-                        },
-                        navArgument("argFloat") {
-                            nullable = true
-                            type = NavType.fromArgType("Float", "kotlin")
-                        },
-                    )) { backStackEntry ->
-                        val argAge = backStackEntry.arguments?.getInt("argAge")
-                        val argFloat = backStackEntry.arguments?.getFloat("argFloat")
-                        Log.d(TAG, "Navigating to UltraDestination")
-                        UltraDestination(age = argAge, float = argFloat)
-                    }
-                    composable("MyDestination?argValue={value}", arguments = listOf(
-                        navArgument("argValue") {
-                            nullable = true
-                            type = NavType.fromArgType("Int", "kotlin")
-                        },
-                    )) { backStackEntry ->
-                        val argValue = backStackEntry.arguments?.getInt("argValue")
-                        Log.d(TAG, "Navigating to MyDestination")
-                        MyDestination(value = argValue)
-                    }
-                    composable("NoDestination") {
-                        Log.d(TAG, "Navigating to NoDestination")
-                        NoDestination()
-                    }
+              NavHost(navController = navController, startDestination = "HomeDestination/argName")
+              {
+                composable("HomeDestination/argName", arguments = listOf(
+                  navArgument("argName"){
+                    nullable = false
+                    type = NavType.fromArgType("String","kotlin")
+                  },
+                )) { backStackEntry ->
+                  val argName = backStackEntry.arguments?.getString("argName")
+                  requireNotNull(argName)
+                  Log.d(TAG, "Navigating to HomeDestination")
+                  HomeDestination(name=argName)
                 }
+                composable("DetailDestination/argAge", arguments = listOf(
+                  navArgument("argAge"){
+                    nullable = false
+                    type = NavType.fromArgType("Int","kotlin")
+                  },
+                )) { backStackEntry ->
+                  val argAge = backStackEntry.arguments?.getInt("argAge")
+                  requireNotNull(argAge)
+                  Log.d(TAG, "Navigating to DetailDestination")
+                  DetailDestination(age=argAge)
+                }
+                composable("UltraDestination?argAge={age}&argFloat={float}", arguments = listOf(
+                  navArgument("argAge"){
+                    nullable = false
+                    type = NavType.fromArgType("Int","kotlin")
+                  },
+                  navArgument("argFloat"){
+                    nullable = true
+                    type = NavType.fromArgType("Float","kotlin")
+                  },
+                )) { backStackEntry ->
+                  val argAge = backStackEntry.arguments?.getInt("argAge")
+                  val argFloat = backStackEntry.arguments?.getFloat("argFloat")
+                  requireNotNull(argAge)
+                  Log.d(TAG, "Navigating to UltraDestination")
+                  UltraDestination(age=argAge, float=argFloat)
+                }
+                composable("MyDestination?argValue={value}", arguments = listOf(
+                  navArgument("argValue"){
+                    nullable = true
+                    type = NavType.fromArgType("Int","kotlin")
+                  },
+                )) { backStackEntry ->
+                  val argValue = backStackEntry.arguments?.getInt("argValue")
+                  Log.d(TAG, "Navigating to MyDestination")
+                  MyDestination(value=argValue)
+                }
+                composable("NoDestination") {
+                  Log.d(TAG, "Navigating to NoDestination")
+                  NoDestination()
+                }
+              }
             }
             
             private const val TAG: String = "NavHost"
