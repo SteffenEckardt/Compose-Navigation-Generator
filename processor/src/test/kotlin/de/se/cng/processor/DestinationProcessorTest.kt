@@ -35,6 +35,153 @@ class DestinationProcessorTest : ProcessorTestBase() {
     @Nested
     inner class NavHostGenerator {
 
+        @Test
+        fun `auto-inject only navigation controller`() {
+
+            val kotlinSource = SourceFile.kotlin("Composables.kt",
+                """
+                package de.se.cng                
+                
+                import androidx.navigation.NavHostController
+                import androidx.compose.runtime.Composable
+                import de.se.cng.annotation.Destination
+                import de.se.cng.annotation.Home
+                
+                @Composable
+                @Home
+                @Destination
+                fun HomeDestination(navHostController: NavHostController) {
+                
+                }
+                """.trimIndent()
+            )
+
+            val compilationResult = compile(kotlinSource)
+            assertEquals(KotlinCompilation.ExitCode.OK, compilationResult.exitCode)
+
+            val expected = """
+            package de.se.cng
+            
+            import android.util.Log
+            import androidx.compose.runtime.Composable
+            import androidx.navigation.NavHostController
+            import androidx.navigation.NavType
+            import androidx.navigation.compose.NavHost
+            import androidx.navigation.compose.composable
+            import androidx.navigation.navArgument
+            import kotlin.String
+            import kotlin.Unit
+            
+            @Composable
+            public fun SetupNavHost(navController: NavHostController): Unit {
+              NavHost(navController = navController, startDestination = "HomeDestination")
+              {
+                composable("HomeDestination") {
+                  Log.d(TAG, "Navigating to HomeDestination")
+                  HomeDestination(navHostController = navController)
+                }
+              }
+            }
+            
+            private const val TAG: String = "NavHost"
+            """.trimIndent()
+
+            assertSourceEquals(
+                expected,
+                compilationResult.sourceFor("NavHost.kt")
+            )
+        }
+
+        @Test
+        fun `auto-inject navigation controller and other arguments`() {
+
+            val kotlinSource = listOf(
+                SourceFile.kotlin("Composables1.kt",
+                    """
+                package de.se.cng                
+                
+                import de.se.cng.annotation.*
+                import androidx.navigation.NavHostController
+                import androidx.compose.runtime.Composable
+                
+                @Composable
+                @Home
+                @Destination
+                fun HomeDestination(name: String, navController: NavHostController) {
+                
+                }
+                """.trimIndent()
+                ),
+                SourceFile.kotlin("Composables2.kt",
+                    """
+                package de.se.cng                
+                
+                import androidx.navigation.NavHostController
+                import de.se.cng.annotation.*
+                import androidx.compose.runtime.Composable
+                
+                @Composable
+                @Destination
+                fun DetailDestination(navHostController: NavHostController, age: Int) {
+                
+                }
+                """.trimIndent()
+                ),
+            ).toTypedArray()
+
+            val compilationResult = compile(*kotlinSource)
+            assertEquals(KotlinCompilation.ExitCode.OK, compilationResult.exitCode)
+
+            val expected = """
+            package de.se.cng
+            
+            import android.util.Log
+            import androidx.compose.runtime.Composable
+            import androidx.navigation.NavHostController
+            import androidx.navigation.NavType
+            import androidx.navigation.compose.NavHost
+            import androidx.navigation.compose.composable
+            import androidx.navigation.navArgument
+            import kotlin.String
+            import kotlin.Unit
+            
+            @Composable
+            public fun SetupNavHost(navController: NavHostController): Unit {
+              NavHost(navController = navController, startDestination = "HomeDestination/argName")
+              {
+                composable("HomeDestination/argName", arguments = listOf(
+                  navArgument("argName"){
+                    nullable = false
+                    type = NavType.fromArgType("String","kotlin")
+                  },
+                )) { backStackEntry ->
+                  val argName = backStackEntry.arguments?.getString("argName")
+                  requireNotNull(argName)
+                  Log.d(TAG, "Navigating to HomeDestination")
+                  HomeDestination(navController = navController, name=argName)
+                }
+                composable("DetailDestination/argAge", arguments = listOf(
+                  navArgument("argAge"){
+                    nullable = false
+                    type = NavType.fromArgType("Int","kotlin")
+                  },
+                )) { backStackEntry ->
+                  val argAge = backStackEntry.arguments?.getInt("argAge")
+                  requireNotNull(argAge)
+                  Log.d(TAG, "Navigating to DetailDestination")
+                  DetailDestination(navHostController = navController, age=argAge)
+                }
+              }
+            }
+            
+            private const val TAG: String = "NavHost"
+            """.trimIndent()
+
+            assertSourceEquals(
+                expected,
+                compilationResult.sourceFor("NavHost.kt")
+            )
+        }
 
         @Test
         fun `setup for 1 destination with no arguments`() {

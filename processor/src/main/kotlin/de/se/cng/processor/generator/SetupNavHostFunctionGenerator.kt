@@ -109,8 +109,9 @@ private fun FunSpec.Builder.addNavArgument(navigationParameter: NavigationParame
 }
 
 private fun navRouteTemplate(navigationDestination: NavigationDestination): String {
-    val parameters = navigationDestination.parameters
     val actualName = navigationDestination.actualName
+    val parameters = navigationDestination.parameters
+        .filterNavHostController()
 
     return when {
         // Simple destination
@@ -145,7 +146,6 @@ private fun FunSpec.Builder.addNavParametersGetters(parameters: List<NavigationP
 
     parameters.filterNot { it.isNullable }.forEach { parameter ->
         val parameterName = parameter.name.pascalcase()
-
         addStatement("requireNotNull(arg%L)", parameterName)
     }
 }
@@ -153,12 +153,16 @@ private fun FunSpec.Builder.addNavParametersGetters(parameters: List<NavigationP
 private fun FunSpec.Builder.targetCall(destination: NavigationDestination) = with(this) {
     val destinationName = MemberName(destination.actualPackage, destination.actualName)
     val arguments = destination.parameters
-        .filterNot { it.className == TypeNames.Classes.NavHostController }
+        .filterNavHostController()
         .joinToString { "${it.name}=arg${it.name.pascalcase()}" }
 
     if (destination.parameters.any { it.className == TypeNames.Classes.NavHostController }) {
         val navHostControllerArgName = destination.parameters.single { it.className == TypeNames.Classes.NavHostController }.name
-        addStatement("%M(%L=%L,%L)", navHostControllerArgName, Parameter_NavHostController, destinationName, arguments)
+        if (arguments.isNotEmpty()) {
+            addStatement("%M(%L=%L,%L)", destinationName, navHostControllerArgName, Parameter_NavHostController, arguments)
+        } else {
+            addStatement("%M(%L=%L)", destinationName, navHostControllerArgName, Parameter_NavHostController)
+        }
     } else {
         addStatement("%M(%L)", destinationName, arguments)
     }
@@ -169,6 +173,8 @@ private fun FunSpec.Builder.addLogDebugCall(message: String) = with(this) {
     addStatement("Log.d(TAG, \"%L\")", message)
 }
 
+
+private fun Collection<NavigationParameter>.filterNavHostController() = this.filterNot { it.className == TypeNames.Classes.NavHostController }
 
 
 

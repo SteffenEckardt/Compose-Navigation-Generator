@@ -20,7 +20,7 @@ fun generateNavigationExtensionsFile(packageName: String, destinations: List<Nav
     destinations.forEach { destination ->
         addFunction(generateNavigationExtensionFunction(destination))
     }
-    //addProperty(loggingTag(FileName))
+    //addProperty(loggingTag(FileName)) // TODO: Make optional
     build()
 }
 
