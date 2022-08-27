@@ -25,7 +25,7 @@ jobs:
         run: ./gradlew :processor:build
 
   publish-package:
-    if: github.ref_name == 'main'
+    if: github.ref_name == 'release'
     needs: build-processor
 
     runs-on: ubuntu-latest
