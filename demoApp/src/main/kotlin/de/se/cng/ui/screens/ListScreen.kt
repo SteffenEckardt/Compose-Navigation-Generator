@@ -9,8 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import de.se.cng.ui.navigation.navigateToDetails
+import de.se.cng.annotation.Destination
+import de.se.cng.navigateToDetailScreen
 
+@Destination
 @Composable
 fun ListScreen(navHostController: NavHostController) = Column(
     modifier = Modifier.fillMaxSize(),
@@ -18,16 +20,16 @@ fun ListScreen(navHostController: NavHostController) = Column(
     horizontalAlignment = Alignment.CenterHorizontally
 ) {
     Text(text = "List")
-    Button(onClick = { navHostController.navigateToDetails(1, "Hello1") }) {
+    Button(onClick = { navHostController.navigateToDetailScreen(1, "Hello1", null, "") }) {
         Text(text = "Detail-1")
     }
-    Button(onClick = { navHostController.navigateToDetails(2, "Hello2", "World") }) {
+    Button(onClick = { navHostController.navigateToDetailScreen(2, "Hello2", "World", "") }) {
         Text(text = "Detail-2")
     }
-    Button(onClick = { navHostController.navigateToDetails(3, "Hello3", "World", "Mars") }) {
+    Button(onClick = { navHostController.navigateToDetailScreen(3, "Hello3", "World", "Mars") }) {
         Text(text = "Detail-3")
     }
-    Button(onClick = { navHostController.navigateToDetails(4, "Hello4", parameter4 = "Mars") }) {
+    Button(onClick = { navHostController.navigateToDetailScreen(4, "Hello4", param4 = "Mars", param3 = null) }) {
         Text(text = "Detail-4")
     }
 }

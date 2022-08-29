@@ -6,4 +6,5 @@ data class NavigationParameter(
     val name: String,
     val className: ClassName,
     val isNullable: Boolean = false,
+    val parameterTypes: List<ClassName> = emptyList()
 )

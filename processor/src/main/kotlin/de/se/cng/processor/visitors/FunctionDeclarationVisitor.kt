@@ -1,5 +1,6 @@
 package de.se.cng.processor.visitors
 
+import com.google.devtools.ksp.innerArguments
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.visitor.KSEmptyVisitor
@@ -21,12 +22,15 @@ class FunctionDeclarationVisitor : KSEmptyVisitor<Unit, NavigationDestination>()
             .filterNot {
                 it.name == null
             }
-            .map {
-                val name = it.name!!.asString()
-                val type = it.type.resolve()
+            .map { outerParameter ->
+                val name = outerParameter.name!!.asString()
+                val type = outerParameter.type.resolve()
                 val className = type.toClassName()
+                val parameterTypes = type.innerArguments.map { typeParameter ->
+                    typeParameter.type!!.resolve().toClassName()
+                }
 
-                NavigationParameter(name, className, type.isMarkedNullable)
+                NavigationParameter(name, className, type.isMarkedNullable, parameterTypes)
             }
 
         return NavigationDestination(actualName = destinationName, actualPackage = destinationPackage, parameters = destinationParameters)
