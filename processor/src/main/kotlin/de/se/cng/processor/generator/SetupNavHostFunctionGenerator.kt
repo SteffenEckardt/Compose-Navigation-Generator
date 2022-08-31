@@ -72,7 +72,7 @@ private fun FunSpec.Builder.setupBody(destinations: List<NavigationDestination>)
 private fun FunSpec.Builder.composableCall(destination: NavigationDestination) = with(this) {
     val navRouteTemplate = navRouteTemplate(destination)
     val navHost = MemberName("androidx.navigation.compose", "composable")
-    val parameters = destination.parameters.filterNot { it.className == TypeNames.Classes.NavHostController } // Do not treat NavHostController as NavArg!
+    val parameters = destination.parameters.filterNot { it.type is ParameterType.NavHostController } // Do not treat NavHostController as NavArg!
 
     if (parameters.isEmpty()) {
         beginControlFlow("%M(%S)", navHost, navRouteTemplate)
@@ -92,9 +92,26 @@ private fun FunSpec.Builder.composableCall(destination: NavigationDestination) =
 
 
 private fun FunSpec.Builder.addNavArgument(navigationParameter: NavigationParameter) = with(this) {
+    fun navTypeStatement(parameterType: ParameterType): String {
+        return when (parameterType) {
+            is ParameterType.String  -> "StringType"
+            is ParameterType.Int     -> "IntType"
+            is ParameterType.Long    -> "LongType"
+            is ParameterType.Boolean -> "BoolType"
+            is ParameterType.Float   -> "FloatType"
+            is ParameterType.Double  -> "FloatType"
+            is ParameterType.Byte    -> "IntType"
+            is ParameterType.Short   -> "IntType"
+            is ParameterType.Char    -> "IntType"
+            is ParameterType.List    -> "${navTypeStatement(parameterType.contentType).substringBefore("Type")}ArrayType"
+            is ParameterType.Set     -> "${navTypeStatement(parameterType.contentType).substringBefore("Type")}ArrayType"
+            is ParameterType.Map     -> TODO()
+            else                     -> TODO()
+        }
+    }
+
     val name = navigationParameter.name
     val isNullable = navigationParameter.isNullable
-    val className = navigationParameter.className
 
     val navArgument = MemberName("androidx.navigation", "navArgument")
     addCode(buildCodeBlock {
@@ -102,44 +119,12 @@ private fun FunSpec.Builder.addNavArgument(navigationParameter: NavigationParame
             addStatement("%M(\"arg%L\"){", navArgument, name.pascalcase())
             withIndent {
                 addStatement("nullable = %L", isNullable)
-                addStatement("type = NavType.%L", navTypeStatement(navigationParameter))
+                addStatement("type = NavType.%L", navTypeStatement(navigationParameter.type))
             }
             addStatement("},")
         }
     })
 }
-
-// TODO: Build proper translation
-private fun navTypeStatement(navigationParameter: NavigationParameter) = when {
-    navigationParameter.className.simpleName == "String" && navigationParameter.className.packageName == "kotlin"  -> "StringType"
-    navigationParameter.className.simpleName == "Int" && navigationParameter.className.packageName == "kotlin"     -> "IntType"
-    navigationParameter.className.simpleName == "Long" && navigationParameter.className.packageName == "kotlin"    -> "LongType"
-    navigationParameter.className.simpleName == "Boolean" && navigationParameter.className.packageName == "kotlin" -> "BoolType"
-    navigationParameter.className.simpleName == "Float" && navigationParameter.className.packageName == "kotlin"   -> "FloatType"
-    navigationParameter.className.simpleName == "Double" && navigationParameter.className.packageName == "kotlin"  -> "FloatType"
-    navigationParameter.className.simpleName == "Byte" && navigationParameter.className.packageName == "kotlin"    -> "IntType"
-    navigationParameter.className.simpleName == "Short" && navigationParameter.className.packageName == "kotlin"   -> "IntType"
-    navigationParameter.className.simpleName == "Char" && navigationParameter.className.packageName == "kotlin"    -> "IntType"
-    navigationParameter.className.simpleName == "Iterable"
-            && navigationParameter.className.packageName == "kotlin.collections"
-            && navigationParameter.parameterTypes.singleOrNull()?.simpleName == "String"                           -> "StringArrayType"
-    else                                                                                                           -> "kjynbckjhsabdikuwabik"
-}
-/*
-    IntType.name == type -> return IntType
-    IntArrayType.name == type -> return IntArrayType
-    LongType.name == type -> return LongType
-    LongArrayType.name == type -> return LongArrayType
-    BoolType.name == type -> return BoolType
-    BoolArrayType.name == type -> return BoolArrayType
-    StringType.name == type -> return StringType
-    StringArrayType.name == type -> return StringArrayType
-    FloatType.name == type -> return FloatType
-    FloatArrayType.name == type -> return FloatArrayType
-    ReferenceType.name == type -> return ReferenceType
-*/
-
-
 
 private fun navRouteTemplate(navigationDestination: NavigationDestination): String {
     val actualName = navigationDestination.actualName
@@ -155,33 +140,38 @@ private fun navRouteTemplate(navigationDestination: NavigationDestination): Stri
 
         // Optional destination
         else                              -> "$actualName${
-            parameters.joinToString(separator = "&", prefix = "?") { parameter -> "arg${parameter.name.pascalcase()}={${parameter.name}}" }
+            parameters.joinToString(separator = "&", prefix = "?") { parameter -> "arg${parameter.name.pascalcase()}={arg${parameter.name.pascalcase()}}" }
         }"
     }
 }
 
-// TODO: Build proper translation
 private fun FunSpec.Builder.addNavParametersGetters(parameters: List<NavigationParameter>) = with(this) {
-    fun mapParameterToGetter(parameter: NavigationParameter) = when {
-        parameter.className.canonicalName == "kotlin.String"                       -> "getString"
-        parameter.className.canonicalName == "kotlin.Int"                          -> "getInt"
-        parameter.className.canonicalName == "kotlin.Double"                       -> "getDouble"
-        parameter.className.canonicalName == "kotlin.Float"                        -> "getFloat"
-        parameter.className.canonicalName == "kotlin.Boolean"                      -> "getBool"
-        parameter.className.canonicalName == "kotlin.Long"                         -> "getLong"
-        parameter.className.canonicalName == "kotlin.Byte"                         -> "getByte"
-        parameter.className.canonicalName == "kotlin.Short"                        -> "getShort"
-        parameter.className.canonicalName == "kotlin.Char"                         -> "getChar"
-        parameter.className.canonicalName == "kotlin.collections.Iterable"
-                && parameter.parameterTypes.singleOrNull()?.simpleName == "String" -> "getStringArray"
-        else                                                                       -> "kasuzgvdalkuszdk" // TODO: Throw exception?
+    fun mapParameterToGetter(parameterType: ParameterType): String = when (parameterType) {
+        is ParameterType.String  -> "getString"
+        is ParameterType.Int     -> "getInt"
+        is ParameterType.Long    -> "getDouble"
+        is ParameterType.Boolean -> "getFloat"
+        is ParameterType.Float   -> "getBool"
+        is ParameterType.Double  -> "getLong"
+        is ParameterType.Byte    -> "getByte"
+        is ParameterType.Short   -> "getShort"
+        is ParameterType.Char    -> "getChar"
+        is ParameterType.List    -> "${mapParameterToGetter(parameterType.contentType)}Array"
+        is ParameterType.Set     -> "${mapParameterToGetter(parameterType.contentType)}Array"
+        is ParameterType.Map     -> TODO()
+        else                     -> TODO()
     }
 
     parameters.forEach { parameter ->
         val parameterName = parameter.name.pascalcase()
-        val parameterGetter = mapParameterToGetter(parameter)
+        val parameterGetter = mapParameterToGetter(parameter.type)
 
-        addStatement("val arg%L = backStackEntry.arguments?.%L(\"arg%L\")", parameterName, parameterGetter, parameterName)
+        when (parameter.type) {
+            is ParameterType.List -> addStatement("val arg%L = backStackEntry.arguments?.%L(\"arg%L\").toList()", parameterName, parameterGetter, parameterName)
+            is ParameterType.Set  -> addStatement("val arg%L = backStackEntry.arguments?.%L(\"arg%L\").toSet()", parameterName, parameterGetter, parameterName)
+            is ParameterType.Map  -> TODO()
+            else                  -> addStatement("val arg%L = backStackEntry.arguments?.%L(\"arg%L\")", parameterName, parameterGetter, parameterName)
+        }
     }
 
     parameters.filterNot { it.isNullable }.forEach { parameter ->
@@ -196,8 +186,8 @@ private fun FunSpec.Builder.targetCall(destination: NavigationDestination) = wit
         .filterNavHostController()
         .joinToString { "${it.name}=arg${it.name.pascalcase()}" }
 
-    if (destination.parameters.any { it.className == TypeNames.Classes.NavHostController }) {
-        val navHostControllerArgName = destination.parameters.single { it.className == TypeNames.Classes.NavHostController }.name
+    if (destination.parameters.any { it.type is ParameterType.NavHostController }) {
+        val navHostControllerArgName = destination.parameters.single { it.type is ParameterType.NavHostController }.name
         if (arguments.isNotEmpty()) {
             addStatement("%M(%L=%L,%L)", destinationName, navHostControllerArgName, Parameter_NavHostController, arguments)
         } else {

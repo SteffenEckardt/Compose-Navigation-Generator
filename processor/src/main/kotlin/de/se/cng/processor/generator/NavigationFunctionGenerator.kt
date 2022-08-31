@@ -4,6 +4,7 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterSpec
 import de.se.cng.processor.extensions.filterNavHostController
+import de.se.cng.processor.extensions.pascalcase
 import de.se.cng.processor.models.NavigationDestination
 import de.se.cng.processor.models.NavigationParameter
 
@@ -13,8 +14,7 @@ private val navigationFunctionImports = listOf(
     Pair("androidx.navigation", "NavHostController"),
 )
 
-fun generateNavigationExtensionsFile(packageName: String, destinations: List<NavigationDestination>) = with(FileSpec.builder(packageName, FileName))
-{
+fun generateNavigationExtensionsFile(packageName: String, destinations: List<NavigationDestination>) = with(FileSpec.builder(packageName, FileName)) {
     navigationFunctionImports.forEach { import ->
         addImport(packageName = import.first, import.second)
     }
@@ -27,9 +27,7 @@ fun generateNavigationExtensionsFile(packageName: String, destinations: List<Nav
 
 
 private fun generateNavigationExtensionFunction(destination: NavigationDestination): FunSpec {
-    val functionParameters = destination.parameters
-        .filterNavHostController()
-        .map { parameter -> navigationFunctionParameters(parameter) }
+    val functionParameters = destination.parameters.filterNavHostController().map { parameter -> navigationFunctionParameters(parameter) }
     val actualName = if (destination.customName.isNullOrEmpty()) destination.actualName else destination.customName
 
     return with(FunSpec.builder("navigateTo$actualName")) {
@@ -40,9 +38,8 @@ private fun generateNavigationExtensionFunction(destination: NavigationDestinati
     }
 }
 
-private fun navigationFunctionParameters(parameter: NavigationParameter) = ParameterSpec
-    .builder(parameter.name, parameter.className.copy(nullable = parameter.isNullable))
-    .build()
+private fun navigationFunctionParameters(parameter: NavigationParameter) =
+    ParameterSpec.builder(parameter.name, parameter.type.className.copy(nullable = parameter.isNullable)).build()
 
 private fun FunSpec.Builder.addNavigationFunctionBody(destination: NavigationDestination) = with(this) {
     val navRouteActual = navRouteActual(destination)
@@ -50,15 +47,14 @@ private fun FunSpec.Builder.addNavigationFunctionBody(destination: NavigationDes
 }
 
 private fun navRouteActual(navigationDestination: NavigationDestination): String {
-    val parameters = navigationDestination.parameters
-        .filterNavHostController()
+    val parameters = navigationDestination.parameters.filterNavHostController()
     val destinationName = navigationDestination.actualName
 
     return when {
         parameters.isEmpty()              -> destinationName
-        parameters.none { it.isNullable } ->
-            "$destinationName${parameters.joinToString(separator = "/", prefix = "/") { parameter -> "\$${parameter.name}" }}"
-        else                              ->
-            "$destinationName${parameters.joinToString(separator = "&", prefix = "?") { parameter -> "arg_${parameter.name}=\$${parameter.name}" }}"
+        parameters.none { it.isNullable } -> "$destinationName${parameters.joinToString(separator = "/", prefix = "/") { parameter -> "\$${parameter.name}" }}"
+        else                              -> "$destinationName${
+            parameters.joinToString(separator = "&", prefix = "?") { parameter -> "arg${parameter.name.pascalcase()}=\$${parameter.name}" }
+        }"
     }
 }

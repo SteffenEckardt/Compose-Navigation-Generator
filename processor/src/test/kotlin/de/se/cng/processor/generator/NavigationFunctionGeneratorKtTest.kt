@@ -1,3 +1,13 @@
+/*
+    Why are these warnings ignored?
+    ======================================================================================
+    "RedundantVisibilityModifier"   -> KotlinPoet generates explicit public functions.
+    "RedundantUnitReturnType"       -> KotlinPoet generates explicit Unit return type.
+    "TestFunctionName"              -> Compose functions start with an uppercase Letter.
+    "unused"                        -> Navigation functions are not called in test context.
+*/
+@file:Suppress("RedundantVisibilityModifier", "TestFunctionName", "RedundantUnitReturnType", "unused")
+
 package de.se.cng.processor.generator
 
 import com.tschuchort.compiletesting.KotlinCompilation
@@ -600,7 +610,7 @@ internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
             @Composable
             @Home
             @Destination
-            fun HomeDestination(arg: Iterable<String>) {
+            fun HomeDestination(arg: List<String>) {
             
             }
             """.trimIndent()

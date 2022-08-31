@@ -1,10 +1,9 @@
 package de.se.cng.processor.models
 
-import com.squareup.kotlinpoet.ClassName
+import de.se.cng.processor.generator.ParameterType
 
 data class NavigationParameter(
     val name: String,
-    val className: ClassName,
+    val type: ParameterType,
     val isNullable: Boolean = false,
-    val parameterTypes: List<ClassName> = emptyList()
 )

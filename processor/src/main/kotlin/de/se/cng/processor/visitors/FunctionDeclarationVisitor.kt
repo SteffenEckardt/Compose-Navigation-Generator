@@ -5,10 +5,11 @@ import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.visitor.KSEmptyVisitor
 import com.squareup.kotlinpoet.ksp.toClassName
+import de.se.cng.processor.generator.ParameterType
 import de.se.cng.processor.models.NavigationDestination
 import de.se.cng.processor.models.NavigationParameter
 
-class FunctionDeclarationVisitor : KSEmptyVisitor<Unit, NavigationDestination>() {
+internal class FunctionDeclarationVisitor : KSEmptyVisitor<Unit, NavigationDestination>() {
 
     override fun defaultHandler(node: KSNode, data: Unit): NavigationDestination {
         TODO("Not yet implemented")
@@ -25,12 +26,15 @@ class FunctionDeclarationVisitor : KSEmptyVisitor<Unit, NavigationDestination>()
             .map { outerParameter ->
                 val name = outerParameter.name!!.asString()
                 val type = outerParameter.type.resolve()
-                val className = type.toClassName()
-                val parameterTypes = type.innerArguments.map { typeParameter ->
-                    typeParameter.type!!.resolve().toClassName()
+
+                val parameterType: ParameterType = when (type.innerArguments.size) {
+                    0    -> ParameterType.from(type.toClassName())
+                    1    -> ParameterType.from(type.toClassName(), type.innerArguments[0].type!!.resolve().toClassName())
+                    2    -> ParameterType.from(type.toClassName(), type.innerArguments[0].type!!.resolve().toClassName(), type.innerArguments[1].type!!.resolve().toClassName())
+                    else -> TODO()
                 }
 
-                NavigationParameter(name, className, type.isMarkedNullable, parameterTypes)
+                NavigationParameter(name, parameterType, type.isMarkedNullable)
             }
 
         return NavigationDestination(actualName = destinationName, actualPackage = destinationPackage, parameters = destinationParameters)

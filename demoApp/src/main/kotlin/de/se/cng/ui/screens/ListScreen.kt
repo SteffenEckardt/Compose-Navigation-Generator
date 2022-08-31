@@ -20,7 +20,9 @@ fun ListScreen(navHostController: NavHostController) = Column(
     horizontalAlignment = Alignment.CenterHorizontally
 ) {
     Text(text = "List")
-    Button(onClick = { navHostController.navigateToDetailScreen(1, "Hello1", null, "") }) {
+    Button(onClick = {
+        navHostController.navigate("DetailScreen?argElementId=3&argParam2=Hello3&argParam3=World&argParam4=Mars")
+    }) {
         Text(text = "Detail-1")
     }
     Button(onClick = { navHostController.navigateToDetailScreen(2, "Hello2", "World", "") }) {

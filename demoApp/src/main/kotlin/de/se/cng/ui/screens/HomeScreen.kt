@@ -6,9 +6,9 @@ import de.se.cng.annotation.Destination
 import de.se.cng.annotation.Home
 import de.se.cng.navigateToListScreen
 
-@Home
-@Destination
 @Composable
+@Destination
+@Home
 fun HomeScreen(navHostController: NavHostController) = TemplateScreen(
     title = "Home",
     navigationDestinationTitle = "List",

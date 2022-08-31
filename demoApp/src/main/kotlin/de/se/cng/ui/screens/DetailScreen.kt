@@ -23,5 +23,3 @@ fun DetailScreen(
 {
     navHostController.navigateToHomeScreen()
 }
-
-
