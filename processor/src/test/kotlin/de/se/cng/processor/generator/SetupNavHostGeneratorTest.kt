@@ -10,12 +10,9 @@
 
 package de.se.cng.processor.generator
 
-import com.tschuchort.compiletesting.KotlinCompilation
-import com.tschuchort.compiletesting.SourceFile
 import de.se.cng.processor.ProcessorTestBase
 import de.se.cng.processor.models.NavigationDestination
 import de.se.cng.processor.processor.DestinationAnnotationProcessor
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
