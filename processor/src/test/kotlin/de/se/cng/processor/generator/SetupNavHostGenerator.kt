@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 @DisplayName("Navigation Function Generator")
-internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
+internal class NavigatorClassGeneratorTestTest : ProcessorTestBase() {
 
     @DisplayName("Primitives mapper")
     @Nested
@@ -31,7 +31,7 @@ internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables1.kt",
                 """
-            package de.se.cng                
+            package de.se.cng.generated               
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable
@@ -94,7 +94,7 @@ internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables1.kt",
                 """
-            package de.se.cng                
+            package de.se.cng.generated               
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable
@@ -157,7 +157,7 @@ internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables1.kt",
                 """
-            package de.se.cng                
+            package de.se.cng.generated               
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable
@@ -220,7 +220,7 @@ internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables1.kt",
                 """
-            package de.se.cng                
+            package de.se.cng.generated               
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable
@@ -283,7 +283,7 @@ internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables1.kt",
                 """
-            package de.se.cng                
+            package de.se.cng.generated               
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable
@@ -346,7 +346,7 @@ internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables1.kt",
                 """
-            package de.se.cng                
+            package de.se.cng.generated               
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable
@@ -409,7 +409,7 @@ internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables1.kt",
                 """
-            package de.se.cng                
+            package de.se.cng.generated               
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable
@@ -472,7 +472,7 @@ internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables1.kt",
                 """
-            package de.se.cng                
+            package de.se.cng.generated               
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable
@@ -535,7 +535,7 @@ internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables1.kt",
                 """
-            package de.se.cng                
+            package de.se.cng.generated               
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable
@@ -602,7 +602,7 @@ internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
         fun `string array type is mapped correctly`() {
             val kotlinSource = SourceFile.kotlin("Composables1.kt",
                 """
-            package de.se.cng                
+            package de.se.cng.generated               
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable
@@ -665,7 +665,7 @@ internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables1.kt",
                 """
-            package de.se.cng                
+            package de.se.cng.generated               
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable
@@ -728,7 +728,7 @@ internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables1.kt",
                 """
-            package de.se.cng                
+            package de.se.cng.generated               
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable
@@ -791,7 +791,7 @@ internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables1.kt",
                 """
-            package de.se.cng                
+            package de.se.cng.generated               
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable
@@ -854,7 +854,7 @@ internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables1.kt",
                 """
-            package de.se.cng                
+            package de.se.cng.generated               
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable
@@ -917,7 +917,7 @@ internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables1.kt",
                 """
-            package de.se.cng                
+            package de.se.cng.generated               
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable
@@ -980,7 +980,7 @@ internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables1.kt",
                 """
-            package de.se.cng                
+            package de.se.cng.generated               
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable
@@ -1043,7 +1043,7 @@ internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables1.kt",
                 """
-            package de.se.cng                
+            package de.se.cng.generated               
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable
@@ -1106,7 +1106,7 @@ internal class NavigationFunctionGeneratorTest : ProcessorTestBase() {
 
             val kotlinSource = SourceFile.kotlin("Composables1.kt",
                 """
-            package de.se.cng                
+            package de.se.cng.generated               
             
             import de.se.cng.annotation.*
             import androidx.compose.runtime.Composable

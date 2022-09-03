@@ -1,7 +1,8 @@
 package de.se.cng.processor.generator
 
 import com.squareup.kotlinpoet.*
-import de.se.cng.processor.extensions.filterNavHostController
+import de.se.cng.processor.exceptions.UnsupportedParameterTypeException
+import de.se.cng.processor.extensions.filterNavigator
 import de.se.cng.processor.extensions.pascalcase
 import de.se.cng.processor.extensions.requireNotNull
 import de.se.cng.processor.models.NavigationDestination
@@ -20,12 +21,12 @@ private val navHostImports = listOf(
     Pair("androidx.navigation.compose", "composable"),
 )
 
-fun generateSetupFile(`package`: String, destinations: List<NavigationDestination>) = with(FileSpec.builder("de.se.cng", FileName)) {
+fun generateSetupFile(`package`: String, destinations: List<NavigationDestination>, generateLogging: Boolean = false) = with(FileSpec.builder(`package`, FileName)) {
     navHostImports.forEach { import ->
         addImport(packageName = import.first, import.second)
     }
     addFunction(generateSetupFunction(destinations))
-    addProperty(loggingTag(FileName))
+    if (generateLogging) addProperty(loggingTag(FileName))
 
     build()
 }
@@ -103,10 +104,7 @@ private fun FunSpec.Builder.addNavArgument(navigationParameter: NavigationParame
             is ParameterType.Byte    -> "IntType"
             is ParameterType.Short   -> "IntType"
             is ParameterType.Char    -> "IntType"
-            is ParameterType.List    -> "${navTypeStatement(parameterType.contentType).substringBefore("Type")}ArrayType"
-            is ParameterType.Set     -> "${navTypeStatement(parameterType.contentType).substringBefore("Type")}ArrayType"
-            is ParameterType.Map     -> TODO()
-            else                     -> TODO()
+            else                     -> throw UnsupportedParameterTypeException(parameterType)
         }
     }
 
@@ -129,7 +127,7 @@ private fun FunSpec.Builder.addNavArgument(navigationParameter: NavigationParame
 private fun navRouteTemplate(navigationDestination: NavigationDestination): String {
     val actualName = navigationDestination.actualName
     val parameters = navigationDestination.parameters
-        .filterNavHostController()
+        .filterNavigator()
 
     return when {
         // Simple destination
@@ -156,22 +154,13 @@ private fun FunSpec.Builder.addNavParametersGetters(parameters: List<NavigationP
         is ParameterType.Byte    -> "getByte"
         is ParameterType.Short   -> "getShort"
         is ParameterType.Char    -> "getChar"
-        is ParameterType.List    -> "${mapParameterToGetter(parameterType.contentType)}Array"
-        is ParameterType.Set     -> "${mapParameterToGetter(parameterType.contentType)}Array"
-        is ParameterType.Map     -> TODO()
-        else                     -> TODO()
+        else                     -> throw UnsupportedParameterTypeException(parameterType)
     }
 
     parameters.forEach { parameter ->
         val parameterName = parameter.name.pascalcase()
         val parameterGetter = mapParameterToGetter(parameter.type)
-
-        when (parameter.type) {
-            is ParameterType.List -> addStatement("val arg%L = backStackEntry.arguments?.%L(\"arg%L\").toList()", parameterName, parameterGetter, parameterName)
-            is ParameterType.Set  -> addStatement("val arg%L = backStackEntry.arguments?.%L(\"arg%L\").toSet()", parameterName, parameterGetter, parameterName)
-            is ParameterType.Map  -> TODO()
-            else                  -> addStatement("val arg%L = backStackEntry.arguments?.%L(\"arg%L\")", parameterName, parameterGetter, parameterName)
-        }
+        addStatement("val arg%L = backStackEntry.arguments?.%L(\"arg%L\")", parameterName, parameterGetter, parameterName)
     }
 
     parameters.filterNot { it.isNullable }.forEach { parameter ->
@@ -183,7 +172,7 @@ private fun FunSpec.Builder.addNavParametersGetters(parameters: List<NavigationP
 private fun FunSpec.Builder.targetCall(destination: NavigationDestination) = with(this) {
     val destinationName = MemberName(destination.actualPackage, destination.actualName)
     val arguments = destination.parameters
-        .filterNavHostController()
+        .filterNavigator()
         .joinToString { "${it.name}=arg${it.name.pascalcase()}" }
 
     if (destination.parameters.any { it.type is ParameterType.NavHostController }) {

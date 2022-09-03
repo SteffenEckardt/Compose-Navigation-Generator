@@ -1,5 +1,6 @@
 package de.se.cng.processor
 
+import com.squareup.kotlinpoet.FileSpec
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import com.tschuchort.compiletesting.symbolProcessorProviders
@@ -70,16 +71,6 @@ abstract class ProcessorTestBase {
     protected fun assertEmpty(collection: Collection<*>) = assertTrue(collection.isEmpty())
     protected fun assertNotEmpty(collection: Collection<*>) = assertTrue(collection.isNotEmpty())
 
-    protected fun assertSourceEquals_raw(expected: String, actual: String) {
-        val cleanExpected = expected.trim().replace(" ", "").replace("\t", "").trimIndent()
-        val cleanActual = actual.trim().replace(" ", "").replace("\t", "").trimIndent()
-
-        if (cleanActual == cleanExpected) {
-            assertEquals(cleanExpected, cleanActual)
-        } else {
-            assertEquals(expected, actual)
-        }
-    }
 
     protected fun KotlinCompilation.Result.sourceFor(fileName: String) = kspGeneratedSources()
         .find { it.name == fileName }
@@ -92,7 +83,7 @@ abstract class ProcessorTestBase {
         val kotlinGeneratedDir = kspGeneratedDir.resolve("kotlin")
         val javaGeneratedDir = kspGeneratedDir.resolve("java")
         return kotlinGeneratedDir.walk().toList() +
-                javaGeneratedDir.walk().toList()
+            javaGeneratedDir.walk().toList()
     }
 
 
@@ -102,4 +93,5 @@ abstract class ProcessorTestBase {
     private val KotlinCompilation.Result.workingDir: File
         get() = checkNotNull(outputDirectory.parentFile)
 }
+
 

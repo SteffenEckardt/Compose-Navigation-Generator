@@ -11,10 +11,12 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.validate
+import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.ksp.writeTo
 import de.se.cng.annotation.Destination
 import de.se.cng.annotation.Home
-import de.se.cng.processor.generator.generateNavigationExtensionsFile
+import de.se.cng.processor.exceptions.UnsupportedParameterTypeException
+import de.se.cng.processor.generator.generateNavigatorFile
 import de.se.cng.processor.generator.generateSetupFile
 import de.se.cng.processor.models.NavigationDestination
 import de.se.cng.processor.visitors.FunctionDeclarationVisitor
@@ -24,6 +26,10 @@ class DestinationAnnotationProcessor(
     private val codeGenerator: CodeGenerator,
     private val logger: KSPLogger,
 ) : SymbolProcessor {
+
+    companion object {
+        const val PACKAGE = "de.se.cng.generated"
+    }
 
     private val functionDeclarationVisitor = FunctionDeclarationVisitor()
     private val destinations = mutableListOf<NavigationDestination>()
@@ -56,24 +62,35 @@ class DestinationAnnotationProcessor(
     }
 
     override fun finish() {
+        val enableLogging: Boolean = options.getOrDefault("logging", false) as Boolean
+
+        if (!validateDestinations()) return
+        writeKotlinFiles(enableLogging)
+    }
+
+    private fun validateDestinations(): Boolean {
         if (destinations.isEmpty()) {
             logger.info("No destinations where detected.")
-            return
+            return false
         }
 
         if (destinations.singleOrNull { it.isHome } == null) {
             logger.error("No home destination was declared. One @Destination function must be declared as @Home.")
-            return
+            return false
         }
+        return true
+    }
 
-        // TODO: Use correct package
-        generateSetupFile("de.se.cng", destinations)
-            .writeTo(codeGenerator, aggregating = true)
+    private fun writeKotlinFiles(enableLogging: Boolean): Unit = try {
+        val setupFile: FileSpec = generateSetupFile(PACKAGE, destinations, enableLogging)
+        val navigationExtensionsFile: FileSpec = generateNavigatorFile(PACKAGE, destinations, enableLogging)
 
-        // TODO: Use correct package
-        generateNavigationExtensionsFile("de.se.cng", destinations)
-            .writeTo(codeGenerator, aggregating = true)
-
+        setupFile.writeTo(codeGenerator, aggregating = true)
+        navigationExtensionsFile.writeTo(codeGenerator, aggregating = true)
+    } catch (e: UnsupportedParameterTypeException) {
+        logger.error("Unsupported parameter type: ${e.className}")
+    } catch (e: Exception) {
+        logger.error("Unknown error during code generation: ${e.message}")
     }
 }
 

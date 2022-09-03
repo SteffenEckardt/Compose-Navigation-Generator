@@ -5,5 +5,5 @@ data class NavigationDestination(
     val actualPackage: String,
     val customName: String? = null,
     val isHome: Boolean = false,
-    val parameters: List<NavigationParameter> = emptyList(),
+    val parameters: Set<NavigationParameter> = emptySet(),
 )

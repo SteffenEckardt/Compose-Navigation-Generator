@@ -1,6 +1,5 @@
 package de.se.cng.processor.visitors
 
-import com.google.devtools.ksp.innerArguments
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.visitor.KSEmptyVisitor
@@ -26,16 +25,11 @@ internal class FunctionDeclarationVisitor : KSEmptyVisitor<Unit, NavigationDesti
             .map { outerParameter ->
                 val name = outerParameter.name!!.asString()
                 val type = outerParameter.type.resolve()
-
-                val parameterType: ParameterType = when (type.innerArguments.size) {
-                    0    -> ParameterType.from(type.toClassName())
-                    1    -> ParameterType.from(type.toClassName(), type.innerArguments[0].type!!.resolve().toClassName())
-                    2    -> ParameterType.from(type.toClassName(), type.innerArguments[0].type!!.resolve().toClassName(), type.innerArguments[1].type!!.resolve().toClassName())
-                    else -> TODO()
-                }
+                val parameterType = ParameterType.from(type.toClassName())
 
                 NavigationParameter(name, parameterType, type.isMarkedNullable)
             }
+            .toSet()
 
         return NavigationDestination(actualName = destinationName, actualPackage = destinationPackage, parameters = destinationParameters)
     }

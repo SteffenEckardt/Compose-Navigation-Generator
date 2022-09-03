@@ -1,15 +1,12 @@
 package de.se.cng.processor.generator
 
 import com.squareup.kotlinpoet.ClassName
-import de.se.cng.processor.exceptions.ParameterTypeNotAllowedException
+import de.se.cng.processor.exceptions.UnsupportedParameterTypeException
 
 internal object TypeNames {
     object Classes {
         val NavHostController = ClassName("androidx.navigation", "NavHostController")
-    }
-
-    object Functions {
-        val NavHost = ClassName("androidx.navigation", "NavHostController")
+        val Navigator = ClassName("de.se.cng.generated", "Navigator")
     }
 }
 
@@ -26,11 +23,8 @@ sealed class ParameterType(packageName: kotlin.String, simpleName: kotlin.String
     object Short : ParameterType("kotlin", "Short")
     object Char : ParameterType("kotlin", "Char")
 
-    class List(val contentType: ParameterType) : ParameterType("kotlin.collections", "List")
-    class Set(val contentType: ParameterType) : ParameterType("kotlin.collections", "Set")
-    class Map(val keyType: ParameterType, val valueType: ParameterType) : ParameterType("kotlin.collections", "Map")
-
     object NavHostController : ParameterType("androidx.navigation", "NavHostController")
+    object Navigator : ParameterType("de.se.cng.generated", "Navigator")
 
     companion object {
         fun from(className: ClassName): ParameterType = when (className.canonicalName) {
@@ -44,18 +38,7 @@ sealed class ParameterType(packageName: kotlin.String, simpleName: kotlin.String
             "kotlin.Short"                          -> Short
             "kotlin.Char"                           -> Char
             "androidx.navigation.NavHostController" -> NavHostController
-            else                                    -> throw ParameterTypeNotAllowedException(className)
-        }
-
-        fun from(className: ClassName, contentType: ClassName): ParameterType = when (className.canonicalName) {
-            "kotlin.collections.List" -> List(from(contentType))
-            "kotlin.collections.Set"  -> Set(from(contentType))
-            else                      -> throw ParameterTypeNotAllowedException(className)
-        }
-
-        fun from(className: ClassName, keyType: ClassName, valueType: ClassName): ParameterType = when (className.canonicalName) {
-            "kotlin.collections.Map" -> Map(from(keyType), from(valueType))
-            else                     -> throw ParameterTypeNotAllowedException(className)
+            else                                    -> throw UnsupportedParameterTypeException(className)
         }
     }
 }
