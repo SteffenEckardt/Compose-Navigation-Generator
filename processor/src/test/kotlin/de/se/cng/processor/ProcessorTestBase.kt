@@ -1,6 +1,5 @@
 package de.se.cng.processor
 
-import com.squareup.kotlinpoet.FileSpec
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import com.tschuchort.compiletesting.symbolProcessorProviders

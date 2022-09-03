@@ -11,18 +11,10 @@
 package de.se.cng.processor.generator
 
 import de.se.cng.processor.ProcessorTestBase
-import de.se.cng.processor.generator.Dummies.Destinations.details
-import de.se.cng.processor.generator.Dummies.Destinations.home
-import de.se.cng.processor.generator.Dummies.Parameters.age
-import de.se.cng.processor.generator.Dummies.Parameters.height
-import de.se.cng.processor.generator.Dummies.Parameters.name
-import de.se.cng.processor.generator.Dummies.Parameters.weight
 import de.se.cng.processor.models.NavigationDestination
 import de.se.cng.processor.processor.DestinationAnnotationProcessor
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-@DisplayName("Navigation function Generator")
 class NavigatorClassGeneratorTest : ProcessorTestBase() {
 
     companion object {
@@ -30,8 +22,12 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
     }
 
     @Test
-    fun `ignore single NavHostController parameter`() {
-        val navigatorClassFile = configureSource(home())
+    fun `ignore single Navigator parameter`() {
+        val destinations = SourceFactory {
+            Home {
+                Navigator()
+            }
+        }
 
         val expected = """
         package $PACKAGE
@@ -49,12 +45,17 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         }
         """.trimIndent()
 
-        assertSourceEquals(expected, navigatorClassFile)
+        assertSourceEquals(expected, destinations.buildSource())
     }
 
     @Test
-    fun `ignore NavHostController as one of multiple parameters`() {
-        val navigatorClassFile = configureSource(home(name()))
+    fun `ignore Navigator as one of multiple parameters`() {
+        val destinations = SourceFactory {
+            Home {
+                Name()
+                Navigator()
+            }
+        }
 
         val expected = """
         package $PACKAGE
@@ -73,12 +74,14 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         }
         """.trimIndent()
 
-        assertSourceEquals(expected, navigatorClassFile)
+        assertSourceEquals(expected, destinations.buildSource())
     }
 
     @Test
     fun `generate 1 navigation function entry with no arguments`() {
-        val navigatorClassFile = configureSource(home())
+        val destinations = SourceFactory {
+            Home { }
+        }
 
         val expected = """
         package $PACKAGE
@@ -98,13 +101,17 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
 
         assertSourceEquals(
             expected,
-            navigatorClassFile
+            destinations.buildSource()
         )
     }
 
     @Test
     fun `generate 1 navigation function entry with 1 non-null argument`() {
-        val navigatorClassFile = configureSource(home(name()))
+        val destinations = SourceFactory {
+            Home {
+                Name()
+            }
+        }
 
         val expected = """
         package $PACKAGE
@@ -125,13 +132,17 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
 
         assertSourceEquals(
             expected,
-            navigatorClassFile
+            destinations.buildSource()
         )
     }
 
     @Test
     fun `generate 1 navigation function entry with 1 nullable argument`() {
-        val navigatorClassFile = configureSource(home(name(true)))
+        val destinations = SourceFactory {
+            Home {
+                Name(true)
+            }
+        }
 
         val expected = """
         package $PACKAGE
@@ -152,13 +163,19 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
 
         assertSourceEquals(
             expected,
-            navigatorClassFile
+            destinations.buildSource()
         )
     }
 
     @Test
     fun `generate 1 navigation function entry with 3 non-null arguments`() {
-        val navigatorClassFile = configureSource(home(name(), age(), height()))
+        val destinations = SourceFactory {
+            Home {
+                Name()
+                Age()
+                Height()
+            }
+        }
 
         val expected = """
         package $PACKAGE
@@ -185,13 +202,19 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
 
         assertSourceEquals(
             expected,
-            navigatorClassFile
+            destinations.buildSource()
         )
     }
 
     @Test
     fun `generate 1 navigation function entry with 3 nullable arguments`() {
-        val navigatorClassFile = configureSource(home(name(true), age(true), height(true)))
+        val destinations = SourceFactory {
+            Home {
+                Name(true)
+                Age(true)
+                Height(true)
+            }
+        }
 
         val expected = """
         package $PACKAGE
@@ -218,20 +241,21 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
 
         assertSourceEquals(
             expected,
-            navigatorClassFile
+            destinations.buildSource()
         )
     }
 
     @Test
     fun `generate 1 navigation function entry with 4 mixed arguments`() {
-        val navigatorClassFile = configureSource(
-            home(
-                name(true),
-                age(false),
-                height(true),
-                weight(false)
-            )
-        )
+        val destinations = SourceFactory {
+            Home {
+                Name(true)
+                Age(false)
+                Height(true)
+                Weight(false)
+            }
+        }
+
 
         val expected = """
         package $PACKAGE
@@ -259,17 +283,17 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
 
         assertSourceEquals(
             expected,
-            navigatorClassFile
+            destinations.buildSource()
         )
     }
 
     @Test
     fun `generate 2 navigation functions entry with no arguments`() {
+        val destinations = SourceFactory {
+            Home { }
+            Details { }
+        }
 
-        val navigatorClassFile = configureSource(
-            home(),
-            details()
-        )
 
         val expected = """
         package $PACKAGE
@@ -292,16 +316,21 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
 
         assertSourceEquals(
             expected,
-            navigatorClassFile
+            destinations.buildSource()
         )
     }
 
     @Test
     fun `generate 2 navigation functions entry with 1 non-null argument`() {
-        val navigatorClassFile = configureSource(
-            home(name()),
-            details(age())
-        )
+        val destinations = SourceFactory {
+            Home {
+                Name()
+            }
+            Details {
+                Age()
+            }
+        }
+
 
         val expected = """
         package $PACKAGE
@@ -326,17 +355,17 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
 
         assertSourceEquals(
             expected,
-            navigatorClassFile
+            destinations.buildSource()
         )
     }
 
 
     @Test
     fun `generate 2 navigation functions entry with 1 nullable argument`() {
-        val navigatorClassFile = configureSource(
-            home(name(true)),
-            details(age(true))
-        )
+        val destinations = SourceFactory {
+            Home { Name(true) }
+            Details { Age(true) }
+        }
 
         val expected = """
         package $PACKAGE
@@ -361,12 +390,12 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
 
         assertSourceEquals(
             expected,
-            navigatorClassFile
+            destinations.buildSource()
         )
     }
 
-    private fun configureSource(vararg destinations: NavigationDestination) =
-        generateNavigatorFile(PACKAGE, destinations.toList(), false)
-            .toString()
+    private fun List<NavigationDestination>.buildSource(): String {
+        return generateNavigatorFile(PACKAGE, this, false).toString()
+    }
 
 }

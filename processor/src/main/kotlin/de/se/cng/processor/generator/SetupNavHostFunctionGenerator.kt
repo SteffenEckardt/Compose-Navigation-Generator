@@ -25,18 +25,18 @@ fun generateSetupFile(`package`: String, destinations: List<NavigationDestinatio
     navHostImports.forEach { import ->
         addImport(packageName = import.first, import.second)
     }
-    addFunction(generateSetupFunction(destinations))
+    addFunction(generateSetupFunction(destinations,generateLogging))
     if (generateLogging) addProperty(loggingTag(FileName))
 
     build()
 }
 
-private fun generateSetupFunction(destinations: List<NavigationDestination>): FunSpec = with(FunSpec.builder("SetupNavHost")) {
+private fun generateSetupFunction(destinations: List<NavigationDestination>, generateLogging: Boolean): FunSpec = with(FunSpec.builder("SetupNavHost")) {
     val composableAnnotation = ClassName("androidx.compose.runtime", "Composable")
 
     addAnnotation(composableAnnotation)
     addParameter(Parameter_NavHostController, TypeNames.Classes.NavHostController)
-    setupBody(destinations)
+    setupBody(destinations,generateLogging)
     build()
 }
 
@@ -49,7 +49,7 @@ private fun generateSetupFunction(destinations: List<NavigationDestination>): Fu
  * }
  * ```
  */
-private fun FunSpec.Builder.setupBody(destinations: List<NavigationDestination>) = with(this) {
+private fun FunSpec.Builder.setupBody(destinations: List<NavigationDestination>, generateLogging: Boolean) = with(this) {
     val homeDestination = destinations.singleOrNull { it.isHome }.requireNotNull()
     val homeDestinationRouteTemplate = navRouteTemplate(homeDestination)
     val navHost = MemberName("androidx.navigation.compose", "NavHost")
@@ -57,7 +57,7 @@ private fun FunSpec.Builder.setupBody(destinations: List<NavigationDestination>)
     addStatement("%M(navController = %L, startDestination = %S)", navHost, Parameter_NavHostController, homeDestinationRouteTemplate)
     beginControlFlow("{")
     destinations.forEach { destination ->
-        composableCall(destination)
+        composableCall(destination, generateLogging)
     }
     endControlFlow()
 }
@@ -70,7 +70,7 @@ private fun FunSpec.Builder.setupBody(destinations: List<NavigationDestination>)
  * }
  * ```
  */
-private fun FunSpec.Builder.composableCall(destination: NavigationDestination) = with(this) {
+private fun FunSpec.Builder.composableCall(destination: NavigationDestination, generateLogging: Boolean) = with(this) {
     val navRouteTemplate = navRouteTemplate(destination)
     val navHost = MemberName("androidx.navigation.compose", "composable")
     val parameters = destination.parameters.filterNot { it.type is ParameterType.NavHostController } // Do not treat NavHostController as NavArg!
@@ -86,7 +86,7 @@ private fun FunSpec.Builder.composableCall(destination: NavigationDestination) =
         addNavParametersGetters(parameters)
     }
 
-    addLogDebugCall("Navigating to ${destination.actualName}")
+    if(generateLogging) addLogDebugCall("Navigating to ${destination.actualName}")
     targetCall(destination)
     endControlFlow()
 }
@@ -147,10 +147,10 @@ private fun FunSpec.Builder.addNavParametersGetters(parameters: List<NavigationP
     fun mapParameterToGetter(parameterType: ParameterType): String = when (parameterType) {
         is ParameterType.String  -> "getString"
         is ParameterType.Int     -> "getInt"
-        is ParameterType.Long    -> "getDouble"
-        is ParameterType.Boolean -> "getFloat"
-        is ParameterType.Float   -> "getBool"
-        is ParameterType.Double  -> "getLong"
+        is ParameterType.Long    -> "getLong"
+        is ParameterType.Boolean -> "getBool"
+        is ParameterType.Float   -> "getFloat"
+        is ParameterType.Double  -> "getDouble"
         is ParameterType.Byte    -> "getByte"
         is ParameterType.Short   -> "getShort"
         is ParameterType.Char    -> "getChar"
