@@ -2,4 +2,8 @@
 
 package de.se.cng.generated
 
-class Navigator
+import androidx.navigation.NavHostController
+
+class Navigator(navController: NavHostController) {
+    // Stub
+}

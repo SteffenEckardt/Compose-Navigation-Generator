@@ -31,7 +31,9 @@ sealed class ParameterType(packageName: kotlin.String, simpleName: kotlin.String
     object Navigator : ParameterType("de.se.cng.generated", "Navigator")
 
     companion object {
-        fun from(className: ClassName): ParameterType = when (className.canonicalName) {
+        fun from(className: ClassName): ParameterType = from(className.canonicalName)
+
+        fun from(className: kotlin.String): ParameterType = when (className) {
             "kotlin.String"                         -> String
             "kotlin.Int"                            -> Int
             "kotlin.Double"                         -> Double
@@ -42,7 +44,7 @@ sealed class ParameterType(packageName: kotlin.String, simpleName: kotlin.String
             "kotlin.Short"                          -> Short
             "kotlin.Char"                           -> Char
             "androidx.navigation.NavHostController" -> NavHostController
-            "de.se.cng.generated.Navigator"         -> Navigator
+            "Navigator"         -> Navigator
             else                                    -> throw UnsupportedParameterTypeException(className)
         }
     }

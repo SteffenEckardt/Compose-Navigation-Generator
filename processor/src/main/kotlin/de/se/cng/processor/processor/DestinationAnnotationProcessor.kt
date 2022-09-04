@@ -1,6 +1,5 @@
 package de.se.cng.processor.processor
 
-import com.google.devtools.ksp.containingFile
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
@@ -34,22 +33,24 @@ class DestinationAnnotationProcessor(
     private val allDestinationNames = mutableSetOf<String>()
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        val symbolsWithAnnotation = resolver.getSymbolsWithAnnotation(Destination::class.qualifiedName!!)
+        val symbolsWithAnnotation = resolver
+            .getSymbolsWithAnnotation(Destination::class.qualifiedName!!)
+            .filterIsInstance(KSFunctionDeclaration::class.java)
+
         val unableToProcess = symbolsWithAnnotation.filterNot {
-            it.validate()
+            true//it.validate { _, _ -> true }
         }
 
         symbolsWithAnnotation
-            .filter { it.validate() && it is KSFunctionDeclaration }
+            .filter { /**/true }
             .forEach {
-                val navigationDestinationResult = functionDeclarationVisitor.visitFunctionDeclaration(it as KSFunctionDeclaration, Unit)
+                val navigationDestinationResult = it.accept(functionDeclarationVisitor, Unit)
                 destinations += navigationDestinationResult
             }
 
         symbolsWithAnnotation
-            .filter { it is KSFunctionDeclaration }
             .forEach {
-                allDestinationNames += (it as KSFunctionDeclaration).simpleName.asString()
+                allDestinationNames += it.simpleName.asString()
             }
 
         logger.info("Processed the following files: ${symbolsWithAnnotation.joinToString { it.containingFile.toString() }}")

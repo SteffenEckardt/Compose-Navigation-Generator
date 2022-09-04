@@ -16,7 +16,7 @@ internal class FunctionDeclarationVisitor(private val logger: KSPLogger) : KSEmp
         TODO("Not yet implemented")
     }
 
-    override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit): NavigationDestination {
+    override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit): NavigationDestination = try {
         val destinationName = function.simpleName.asString()
         val destinationPackage = function.packageName.asString()
         val customName = getAnnotationParameterValue(function, Destination::class.simpleName.toString(), "name")
@@ -29,19 +29,27 @@ internal class FunctionDeclarationVisitor(private val logger: KSPLogger) : KSEmp
             .map { outerParameter ->
                 val name = outerParameter.name?.asString().orEmpty()
                 val type = outerParameter.type.resolve()
-                val parameterType = ParameterType.from(type.toClassName())
+
+                val parameterType = try {
+                    ParameterType.from(type.toClassName())
+                } catch (_: Exception) {
+                    ParameterType.from(outerParameter.type.toString())
+                }
 
                 NavigationParameter(name, parameterType, type.isMarkedNullable)
             }
             .toSet()
 
-        return NavigationDestination(
+        NavigationDestination(
             actualName = destinationName,
             customName = customName,
             isHome = isHome,
             actualPackage = destinationPackage,
             parameters = destinationParameters
         )
+    } catch (e: Exception) {
+        logger.error(e.message.toString())
+        throw e
     }
 
     private fun getAnnotationParameterValue(function: KSFunctionDeclaration, annotationName: String, parameterName: String) = function.annotations

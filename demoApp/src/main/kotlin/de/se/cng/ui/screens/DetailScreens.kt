@@ -12,6 +12,6 @@ fun NoArguments(name: String) {
 
 @Destination
 @Composable
-fun Error(navigator: Navigator) {
-
+fun IWantANavigator(navigator: Navigator) {
+    navigator.navigateToHomeScreen()
 }
