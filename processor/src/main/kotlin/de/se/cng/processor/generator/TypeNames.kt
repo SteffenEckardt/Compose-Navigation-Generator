@@ -8,6 +8,10 @@ internal object TypeNames {
         val NavHostController = ClassName("androidx.navigation", "NavHostController")
         val Navigator = ClassName("de.se.cng.generated", "Navigator")
     }
+
+    object Annotations {
+        val Composable = ClassName("androidx.compose.runtime", "Composable")
+    }
 }
 
 sealed class ParameterType(packageName: kotlin.String, simpleName: kotlin.String) {
@@ -38,6 +42,7 @@ sealed class ParameterType(packageName: kotlin.String, simpleName: kotlin.String
             "kotlin.Short"                          -> Short
             "kotlin.Char"                           -> Char
             "androidx.navigation.NavHostController" -> NavHostController
+            "de.se.cng.generated.Navigator"         -> Navigator
             else                                    -> throw UnsupportedParameterTypeException(className)
         }
     }

@@ -409,6 +409,41 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
         assertSourceEquals(expected, destinations.buildSource())
     }
 
+    @Test
+    fun `navigator is injected`() {
+        val destinations = SourceFactory {
+            Home {
+                Navigator()
+            }
+        }
+
+        val expected = """
+        package $PACKAGE
+        
+        import android.util.Log
+        import androidx.compose.runtime.Composable
+        import androidx.navigation.NavHostController
+        import androidx.navigation.NavType
+        import androidx.navigation.compose.NavHost
+        import androidx.navigation.compose.composable
+        import androidx.navigation.navArgument
+        import de.se.ui.HomeDestination
+        import kotlin.Unit
+        
+        @Composable
+        public fun SetupNavHost(navController: NavHostController): Unit {
+          NavHost(navController = navController, startDestination = "HomeDestination")
+          {
+            composable("HomeDestination") {
+              HomeDestination(navigator=Navigator(navController))
+            }
+          }
+        }
+        """.trimIndent()
+
+        assertSourceEquals(expected, destinations.buildSource())
+    }
+
     private fun List<NavigationDestination>.buildSource(): String {
         return generateSetupFile(PACKAGE, this, false).toString()
     }

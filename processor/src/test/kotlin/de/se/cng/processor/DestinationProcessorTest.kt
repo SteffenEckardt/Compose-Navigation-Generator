@@ -27,7 +27,7 @@ class DestinationProcessorTest : ProcessorTestBase() {
     }
 
     @Test
-    fun `ignores non marked functions`() {
+    fun `ignores unmarked functions`() {
 
         val kotlinSource = SourceFile.kotlin("FirstScreen.kt",
             """
@@ -113,6 +113,155 @@ class DestinationProcessorTest : ProcessorTestBase() {
 
         assertSourceEquals(expectedSetupNavHost, compilationResult.sourceFor("NavHost.kt"))
         assertSourceEquals(expectedNavigator, compilationResult.sourceFor("Navigator.kt"))
+
+    }
+
+    @Test
+    fun `incremental processing`() {
+
+        val kotlinSource1 = SourceFile.kotlin("FirstScreen.kt",
+            """
+            package app.ui.screens.first
+            
+            import androidx.compose.runtime.Composable
+            import de.se.cng.annotation.*
+            
+            @Home
+            @Destination
+            @Composable
+            fun HomeDestination() {
+            
+            }
+            """.trimIndent()
+        )
+
+        val kotlinSource21 = SourceFile.kotlin("FirstScreen.kt",
+            """
+            package app.ui.screens.first
+            
+            import androidx.compose.runtime.Composable
+            import de.se.cng.annotation.*
+            
+            @Home
+            @Destination
+            @Composable
+            fun HomeDestination() {
+            
+            }
+            """.trimIndent()
+        )
+
+        val kotlinSource22 = SourceFile.kotlin("SecondScreen.kt",
+            """
+            package app.ui.screens.first
+            
+            import androidx.compose.runtime.Composable
+            import de.se.cng.annotation.*
+            
+            @Destination
+            @Composable
+            fun DetailDestination() {
+            
+            }
+            """.trimIndent()
+        )
+
+        val expectedSetupNavHost1 = """
+        package $PACKAGE
+        
+        import android.util.Log
+        import androidx.compose.runtime.Composable
+        import androidx.navigation.NavHostController
+        import androidx.navigation.NavType
+        import androidx.navigation.compose.NavHost
+        import androidx.navigation.compose.composable
+        import androidx.navigation.navArgument
+        import app.ui.screens.first.HomeDestination
+        import kotlin.Unit
+        
+        @Composable
+        public fun SetupNavHost(navController: NavHostController): Unit {
+          NavHost(navController = navController, startDestination = "HomeDestination")
+          {
+            composable("HomeDestination") { 
+              HomeDestination()
+            }
+          }
+        }
+        """.trimIndent()
+
+        val expectedSetupNavHost2 = """
+        package $PACKAGE
+        
+        import android.util.Log
+        import androidx.compose.runtime.Composable
+        import androidx.navigation.NavHostController
+        import androidx.navigation.NavType
+        import androidx.navigation.compose.NavHost
+        import androidx.navigation.compose.composable
+        import androidx.navigation.navArgument
+        import app.ui.screens.first.HomeDestination
+        import app.ui.screens.first.DetailDestination
+        import kotlin.Unit
+        
+        @Composable
+        public fun SetupNavHost(navController: NavHostController): Unit {
+          NavHost(navController = navController, startDestination = "HomeDestination")
+          {
+            composable("HomeDestination") { 
+              HomeDestination()
+            }
+            composable("DetailDestination") { 
+              DetailDestination()
+            }
+          }
+        }
+        """.trimIndent()
+
+        val expectedNavigator1 = """
+        package $PACKAGE
+        
+        import androidx.compose.runtime.Composable
+        import androidx.navigation.NavHostController
+        import kotlin.Unit
+        
+        public class Navigator(
+          private val navHostController: NavHostController,
+        ) {
+          public fun navigateToHomeDestination(): Unit {
+            navHostController.navigate("HomeDestination")
+          }
+        }
+        """.trimIndent()
+
+        val expectedNavigator2 = """
+        package $PACKAGE
+        
+        import androidx.compose.runtime.Composable
+        import androidx.navigation.NavHostController
+        import kotlin.Unit
+        
+        public class Navigator(
+          private val navHostController: NavHostController,
+        ) {
+          public fun navigateToHomeDestination(): Unit {
+            navHostController.navigate("HomeDestination")
+          }
+          public fun navigateToDetailDestination(): Unit {
+            navHostController.navigate("DetailDestination")
+          }
+        }
+        """.trimIndent()
+
+        val compilationResult1 = compile(kotlinSource1)
+        assertEquals(KotlinCompilation.ExitCode.OK, compilationResult1.exitCode)
+        assertSourceEquals(expectedSetupNavHost1, compilationResult1.sourceFor("NavHost.kt"))
+        assertSourceEquals(expectedNavigator1, compilationResult1.sourceFor("Navigator.kt"))
+
+        val compilationResult2 = compile(kotlinSource21, kotlinSource22)
+        assertEquals(KotlinCompilation.ExitCode.OK, compilationResult2.exitCode)
+        assertSourceEquals(expectedSetupNavHost2, compilationResult2.sourceFor("NavHost.kt"))
+        assertSourceEquals(expectedNavigator2, compilationResult2.sourceFor("Navigator.kt"))
 
     }
 

@@ -1,9 +1,6 @@
-@file:OptIn(KspExperimental::class)
-
 package de.se.cng.processor.processor
 
-import com.google.devtools.ksp.KspExperimental
-import com.google.devtools.ksp.getAnnotationsByType
+import com.google.devtools.ksp.containingFile
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
@@ -14,10 +11,11 @@ import com.google.devtools.ksp.validate
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.ksp.writeTo
 import de.se.cng.annotation.Destination
-import de.se.cng.annotation.Home
 import de.se.cng.processor.exceptions.UnsupportedParameterTypeException
 import de.se.cng.processor.generator.generateNavigatorFile
 import de.se.cng.processor.generator.generateSetupFile
+import de.se.cng.processor.generator.generateStubNavigatorFile
+import de.se.cng.processor.generator.generateStubSetupFile
 import de.se.cng.processor.models.NavigationDestination
 import de.se.cng.processor.visitors.FunctionDeclarationVisitor
 
@@ -31,10 +29,10 @@ class DestinationAnnotationProcessor(
         const val PACKAGE = "de.se.cng.generated"
     }
 
-    private val functionDeclarationVisitor = FunctionDeclarationVisitor()
+    private val functionDeclarationVisitor = FunctionDeclarationVisitor(logger)
     private val destinations = mutableListOf<NavigationDestination>()
+    private val allDestinationNames = mutableSetOf<String>()
 
-    @OptIn(KspExperimental::class)
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val symbolsWithAnnotation = resolver.getSymbolsWithAnnotation(Destination::class.qualifiedName!!)
         val unableToProcess = symbolsWithAnnotation.filterNot {
@@ -42,21 +40,20 @@ class DestinationAnnotationProcessor(
         }
 
         symbolsWithAnnotation
-            .filter { it.validate() }
-            .mapNotNull {
-                if (it is KSFunctionDeclaration) {
-                    val destinationAnnotation = it.getAnnotationsByType(Destination::class).first()
-                    val hasHomeAnnotation = it.getAnnotationsByType(Home::class).any()
-                    val navigationDestination = functionDeclarationVisitor.visitFunctionDeclaration(it, Unit)
-
-                    // Fixme: Find more elegant solution
-                    navigationDestination.copy(customName = destinationAnnotation.name, isHome = hasHomeAnnotation)
-                } else {
-                    null
-                }
-            }.let { propertySpecSequence ->
-                destinations.addAll(propertySpecSequence)
+            .filter { it.validate() && it is KSFunctionDeclaration }
+            .forEach {
+                val navigationDestinationResult = functionDeclarationVisitor.visitFunctionDeclaration(it as KSFunctionDeclaration, Unit)
+                destinations += navigationDestinationResult
             }
+
+        symbolsWithAnnotation
+            .filter { it is KSFunctionDeclaration }
+            .forEach {
+                allDestinationNames += (it as KSFunctionDeclaration).simpleName.asString()
+            }
+
+        logger.info("Processed the following files: ${symbolsWithAnnotation.joinToString { it.containingFile.toString() }}")
+        logger.info("Warning while processing the following files: ${unableToProcess.joinToString { it.containingFile.toString() }}")
 
         return unableToProcess.toList()
     }
@@ -64,8 +61,11 @@ class DestinationAnnotationProcessor(
     override fun finish() {
         val enableLogging: Boolean = options.getOrDefault("logging", false) as Boolean
 
-        if (!validateDestinations()) return
-        writeKotlinFiles(enableLogging)
+        if (validateDestinations()) {
+            writeKotlinFiles(enableLogging)
+        } else {
+            writeStubFiles(enableLogging)
+        }
     }
 
     private fun validateDestinations(): Boolean {
@@ -75,7 +75,7 @@ class DestinationAnnotationProcessor(
         }
 
         if (destinations.singleOrNull { it.isHome } == null) {
-            logger.error("No home destination was declared. One @Destination function must be declared as @Home.")
+            logger.warn("No home destination was declared. One @Destination function must be declared as @Home.")
             return false
         }
         return true
@@ -83,14 +83,22 @@ class DestinationAnnotationProcessor(
 
     private fun writeKotlinFiles(enableLogging: Boolean): Unit = try {
         val setupFile: FileSpec = generateSetupFile(PACKAGE, destinations, enableLogging)
-        val navigationExtensionsFile: FileSpec = generateNavigatorFile(PACKAGE, destinations, enableLogging)
+        val navigatorFile: FileSpec = generateNavigatorFile(PACKAGE, destinations, enableLogging)
 
-        setupFile.writeTo(codeGenerator, aggregating = true)
-        navigationExtensionsFile.writeTo(codeGenerator, aggregating = true)
+        navigatorFile.writeTo(codeGenerator, aggregating = false)
+        setupFile.writeTo(codeGenerator, aggregating = false)
     } catch (e: UnsupportedParameterTypeException) {
         logger.error("Unsupported parameter type: ${e.className}")
     } catch (e: Exception) {
         logger.error("Unknown error during code generation: ${e.message}")
+    }
+
+    private fun writeStubFiles(enableLogging: Boolean) {
+        val stubSetupFile = generateStubSetupFile(PACKAGE, enableLogging)
+        val stubNavigatorFile = generateStubNavigatorFile(PACKAGE, allDestinationNames, enableLogging)
+
+        stubSetupFile.writeTo(codeGenerator, aggregating = false)
+        stubNavigatorFile.writeTo(codeGenerator, aggregating = false)
     }
 }
 

@@ -10,6 +10,7 @@ import de.se.cng.processor.models.NavigationParameter
 
 private const val Parameter_NavHostController = "navController"
 private const val FileName = "NavHost"
+
 private val navHostImports = listOf(
     Pair("android.util", "Log"),
     Pair("androidx.compose.runtime", "Composable"),
@@ -18,25 +19,22 @@ private val navHostImports = listOf(
     Pair("androidx.navigation", "NavType"),
     Pair("androidx.navigation.compose", "NavHost"),
     Pair("androidx.navigation.compose", "composable"),
-    Pair("androidx.navigation.compose", "composable"),
 )
 
 fun generateSetupFile(`package`: String, destinations: List<NavigationDestination>, generateLogging: Boolean = false) = with(FileSpec.builder(`package`, FileName)) {
     navHostImports.forEach { import ->
         addImport(packageName = import.first, import.second)
     }
-    addFunction(generateSetupFunction(destinations,generateLogging))
+    addFunction(generateStubSetupFunction(destinations, generateLogging))
     if (generateLogging) addProperty(loggingTag(FileName))
 
     build()
 }
 
-private fun generateSetupFunction(destinations: List<NavigationDestination>, generateLogging: Boolean): FunSpec = with(FunSpec.builder("SetupNavHost")) {
-    val composableAnnotation = ClassName("androidx.compose.runtime", "Composable")
-
-    addAnnotation(composableAnnotation)
+private fun generateStubSetupFunction(destinations: List<NavigationDestination>, generateLogging: Boolean): FunSpec = with(FunSpec.builder("SetupNavHost")) {
+    addAnnotation(TypeNames.Annotations.Composable)
     addParameter(Parameter_NavHostController, TypeNames.Classes.NavHostController)
-    setupBody(destinations,generateLogging)
+    setupBody(destinations, generateLogging)
     build()
 }
 
@@ -72,13 +70,13 @@ private fun FunSpec.Builder.setupBody(destinations: List<NavigationDestination>,
  */
 private fun FunSpec.Builder.composableCall(destination: NavigationDestination, generateLogging: Boolean) = with(this) {
     val navRouteTemplate = navRouteTemplate(destination)
-    val navHost = MemberName("androidx.navigation.compose", "composable")
-    val parameters = destination.parameters.filterNot { it.type is ParameterType.NavHostController } // Do not treat NavHostController as NavArg!
+    val composableCall = MemberName("androidx.navigation.compose", "composable")
+    val parameters = destination.parameters.filterNavigator() // Do not treat Navigator as NavArg!
 
     if (parameters.isEmpty()) {
-        beginControlFlow("%M(%S)", navHost, navRouteTemplate)
+        beginControlFlow("%M(%S)", composableCall, navRouteTemplate)
     } else {
-        addStatement("%M(%S, arguments = listOf(", navHost, navRouteTemplate)
+        addStatement("%M(%S, arguments = listOf(", composableCall, navRouteTemplate)
         parameters.forEach { navigationParameter ->
             addNavArgument(navigationParameter)
         }
@@ -86,7 +84,7 @@ private fun FunSpec.Builder.composableCall(destination: NavigationDestination, g
         addNavParametersGetters(parameters)
     }
 
-    if(generateLogging) addLogDebugCall("Navigating to ${destination.actualName}")
+    if (generateLogging) addLogDebugCall("Navigating to ${destination.actualName}")
     targetCall(destination)
     endControlFlow()
 }
@@ -175,12 +173,13 @@ private fun FunSpec.Builder.targetCall(destination: NavigationDestination) = wit
         .filterNavigator()
         .joinToString { "${it.name}=arg${it.name.pascalcase()}" }
 
-    if (destination.parameters.any { it.type is ParameterType.NavHostController }) {
-        val navHostControllerArgName = destination.parameters.single { it.type is ParameterType.NavHostController }.name
+    if (destination.parameters.any { it.type is ParameterType.Navigator }) {
+        val navigatorArgName = destination.parameters.single { it.type is ParameterType.Navigator }.name
+
         if (arguments.isNotEmpty()) {
-            addStatement("%M(%L=%L,%L)", destinationName, navHostControllerArgName, Parameter_NavHostController, arguments)
+            addStatement("%M(%L=Navigator(%L),%L)", destinationName, navigatorArgName, Parameter_NavHostController, arguments)
         } else {
-            addStatement("%M(%L=%L)", destinationName, navHostControllerArgName, Parameter_NavHostController)
+            addStatement("%M(%L=Navigator(%L))", destinationName, navigatorArgName, Parameter_NavHostController)
         }
     } else {
         addStatement("%M(%L)", destinationName, arguments)
