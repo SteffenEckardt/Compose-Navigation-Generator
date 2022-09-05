@@ -132,7 +132,7 @@ private fun navRouteTemplate(navigationDestination: NavigationDestination): Stri
         parameters.isEmpty()              -> actualName
 
         // Non-Optional destination
-        parameters.none { it.isNullable } -> "$actualName${parameters.joinToString(separator = "/", prefix = "/") { parameter -> "arg${parameter.name.pascalcase()}" }}"
+        parameters.none { it.isNullable } -> "$actualName${parameters.joinToString(separator = "/", prefix = "/") { parameter -> "{arg${parameter.name.pascalcase()}}" }}"
 
         // Optional destination
         else                              -> "$actualName${
