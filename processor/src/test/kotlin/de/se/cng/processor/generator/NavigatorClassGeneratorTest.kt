@@ -34,13 +34,22 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         
         import androidx.compose.runtime.Composable
         import androidx.navigation.NavHostController
+        import androidx.navigation.NavOptionsBuilder
         import kotlin.Unit
         
         public class Navigator(
             private val navHostController: NavHostController,
         ) {
-            public fun navigateToHomeDestination(): Unit {
-                navHostController.navigate("HomeDestination")
+            public fun navigateToHomeDestination(navOptions: (NavOptionsBuilder.() -> Unit)? = null): Unit {
+                navHostController.navigate("HomeDestination", navOptions ?: { })
+            }
+        
+            public fun navigateHome(navOptions: (NavOptionsBuilder.() -> Unit)? = null): Unit {
+              navHostController.navigate("HomeDestination", navOptions ?: { })
+            }
+          
+            public fun navigateUp(): Unit {
+              navHostController.navigateUp()
             }
         }
         """.trimIndent()
@@ -59,18 +68,28 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
 
         val expected = """
         package $PACKAGE
-        
+
         import androidx.compose.runtime.Composable
         import androidx.navigation.NavHostController
+        import androidx.navigation.NavOptionsBuilder
         import kotlin.String
         import kotlin.Unit
         
         public class Navigator(
-            private val navHostController: NavHostController,
+          private val navHostController: NavHostController,
         ) {
-            public fun navigateToHomeDestination(name: String): Unit {
-                navHostController.navigate("HomeDestination/${'$'}name")
-            }
+          public fun navigateToHomeDestination(name: String, navOptions: (NavOptionsBuilder.() -> Unit)? =
+              null): Unit {
+            navHostController.navigate("HomeDestination/${'$'}name", navOptions ?: { })
+          }
+        
+          public fun navigateHome(name: String, navOptions: (NavOptionsBuilder.() -> Unit)? = null): Unit {
+            navHostController.navigate("HomeDestination/${'$'}name", navOptions ?: { })
+          }
+        
+          public fun navigateUp(): Unit {
+            navHostController.navigateUp()
+          }
         }
         """.trimIndent()
 
@@ -88,13 +107,21 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         
         import androidx.compose.runtime.Composable
         import androidx.navigation.NavHostController
+        import androidx.navigation.NavOptionsBuilder
         import kotlin.Unit
         
         public class Navigator(
           private val navHostController: NavHostController,
         ) {
-          public fun navigateToHomeDestination(): Unit {
-            navHostController.navigate("HomeDestination")
+          public fun navigateToHomeDestination(navOptions: (NavOptionsBuilder.() -> Unit)? = null): Unit {
+            navHostController.navigate("HomeDestination", navOptions ?: { })
+          }
+          public fun navigateHome(navOptions: (NavOptionsBuilder.() -> Unit)? = null): Unit {
+            navHostController.navigate("HomeDestination", navOptions ?: { })
+          }
+        
+          public fun navigateUp(): Unit {
+            navHostController.navigateUp()
           }
         }
         """.trimIndent()
@@ -118,14 +145,23 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         
         import androidx.compose.runtime.Composable
         import androidx.navigation.NavHostController
+        import androidx.navigation.NavOptionsBuilder
         import kotlin.Unit
         import kotlin.String 
         
         public class Navigator(
           private val navHostController: NavHostController,
         ) {
-          public fun navigateToHomeDestination(name: String): Unit {
-            navHostController.navigate("HomeDestination/${'$'}name")
+          public fun navigateToHomeDestination(name: String,navOptions: (NavOptionsBuilder.() -> Unit)? = 
+                null): Unit {
+            navHostController.navigate("HomeDestination/${'$'}name", navOptions ?: { })
+          }
+          public fun navigateHome(name: String,navOptions: (NavOptionsBuilder.() -> Unit)? = null): Unit {
+            navHostController.navigate("HomeDestination/${'$'}name", navOptions ?: { })
+          }
+        
+          public fun navigateUp(): Unit {
+            navHostController.navigateUp()
           }
         }
         """.trimIndent()
@@ -149,14 +185,24 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         
         import androidx.compose.runtime.Composable
         import androidx.navigation.NavHostController
+        import androidx.navigation.NavOptionsBuilder
+        import kotlin.String
         import kotlin.Unit
-        import kotlin.String 
         
         public class Navigator(
           private val navHostController: NavHostController,
         ) {
-          public fun navigateToHomeDestination(name: String?): Unit {
-            navHostController.navigate("HomeDestination?argName=${'$'}name")
+          public fun navigateToHomeDestination(name: String?, navOptions: (NavOptionsBuilder.() -> Unit)? =
+              null): Unit {
+            navHostController.navigate("HomeDestination?argName=${'$'}name", navOptions ?: { })
+          }
+        
+          public fun navigateHome(name: String?, navOptions: (NavOptionsBuilder.() -> Unit)? = null): Unit {
+            navHostController.navigate("HomeDestination?argName=${'$'}name", navOptions ?: { })
+          }
+        
+          public fun navigateUp(): Unit {
+            navHostController.navigateUp()
           }
         }
         """.trimIndent()
@@ -179,23 +225,38 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
 
         val expected = """
         package $PACKAGE
-        
+
         import androidx.compose.runtime.Composable
         import androidx.navigation.NavHostController
+        import androidx.navigation.NavOptionsBuilder
+        import kotlin.Float
+        import kotlin.Int
+        import kotlin.String
         import kotlin.Unit
-        import kotlin.String 
-        import kotlin.Int 
-        import kotlin.Float 
         
         public class Navigator(
           private val navHostController: NavHostController,
         ) {
           public fun navigateToHomeDestination(
-            name: String, 
-            age: Int, 
+            name: String,
+            age: Int,
             height: Float,
-            ): Unit {
-            navHostController.navigate("HomeDestination/${'$'}name/${'$'}age/${'$'}height")
+            navOptions: (NavOptionsBuilder.() -> Unit)? = null,
+          ): Unit {
+            navHostController.navigate("HomeDestination/${'$'}name/${'$'}age/${'$'}height", navOptions ?: { })
+          }
+        
+          public fun navigateHome(
+            name: String,
+            age: Int,
+            height: Float,
+            navOptions: (NavOptionsBuilder.() -> Unit)? = null,
+          ): Unit {
+            navHostController.navigate("HomeDestination/${'$'}name/${'$'}age/${'$'}height", navOptions ?: { })
+          }
+        
+          public fun navigateUp(): Unit {
+            navHostController.navigateUp()
           }
         }
         """.trimIndent()
@@ -218,23 +279,40 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
 
         val expected = """
         package $PACKAGE
-        
+
         import androidx.compose.runtime.Composable
         import androidx.navigation.NavHostController
+        import androidx.navigation.NavOptionsBuilder
+        import kotlin.Float
+        import kotlin.Int
+        import kotlin.String
         import kotlin.Unit
-        import kotlin.String 
-        import kotlin.Int 
-        import kotlin.Float 
         
         public class Navigator(
-            private val navHostController: NavHostController,
+          private val navHostController: NavHostController,
         ) {
           public fun navigateToHomeDestination(
-                name: String?, 
-                age: Int?, 
-                height: Float?,
+            name: String?,
+            age: Int?,
+            height: Float?,
+            navOptions: (NavOptionsBuilder.() -> Unit)? = null,
           ): Unit {
-                navHostController.navigate("HomeDestination?argName=${'$'}name&argAge=${'$'}age&argHeight=${'$'}height")
+            navHostController.navigate("HomeDestination?argName=${'$'}name&argAge=${'$'}age&argHeight=${'$'}height",
+                navOptions ?: { })
+          }
+        
+          public fun navigateHome(
+            name: String?,
+            age: Int?,
+            height: Float?,
+            navOptions: (NavOptionsBuilder.() -> Unit)? = null,
+          ): Unit {
+            navHostController.navigate("HomeDestination?argName=${'$'}name&argAge=${'$'}age&argHeight=${'$'}height",
+                navOptions ?: { })
+          }
+        
+          public fun navigateUp(): Unit {
+            navHostController.navigateUp()
           }
         }
         """.trimIndent()
@@ -262,21 +340,39 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         
         import androidx.compose.runtime.Composable
         import androidx.navigation.NavHostController
+        import androidx.navigation.NavOptionsBuilder
+        import kotlin.Float
+        import kotlin.Int
+        import kotlin.String
         import kotlin.Unit
-        import kotlin.String 
-        import kotlin.Int 
-        import kotlin.Float 
         
         public class Navigator(
-            private val navHostController: NavHostController,
+          private val navHostController: NavHostController,
         ) {
-          public fun navigateToHomeDestination(             
-                name: String?,
-                age: Int,
-                height: Float?,
-                weight: Float,
+          public fun navigateToHomeDestination(
+            name: String?,
+            age: Int,
+            height: Float?,
+            weight: Float,
+            navOptions: (NavOptionsBuilder.() -> Unit)? = null,
           ): Unit {
-                navHostController.navigate("HomeDestination?argName=${'$'}name&argAge=${'$'}age&argHeight=${'$'}height&argWeight=${'$'}weight")
+            navHostController.navigate("HomeDestination?argName=${'$'}name&argAge=${'$'}age&argHeight=${'$'}height&argWeight=${'$'}weight",
+                navOptions ?: { })
+          }
+        
+          public fun navigateHome(
+            name: String?,
+            age: Int,
+            height: Float?,
+            weight: Float,
+            navOptions: (NavOptionsBuilder.() -> Unit)? = null,
+          ): Unit {
+            navHostController.navigate("HomeDestination?argName=${'$'}name&argAge=${'$'}age&argHeight=${'$'}height&argWeight=${'$'}weight",
+                navOptions ?: { })
+          }
+        
+          public fun navigateUp(): Unit {
+            navHostController.navigateUp()
           }
         }
         """.trimIndent()
@@ -300,16 +396,24 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         
         import androidx.compose.runtime.Composable
         import androidx.navigation.NavHostController
+        import androidx.navigation.NavOptionsBuilder
         import kotlin.Unit
         
         public class Navigator(
           private val navHostController: NavHostController,
         ) {
-          public fun navigateToHomeDestination(): Unit {
-            navHostController.navigate("HomeDestination")
+          public fun navigateToHomeDestination(navOptions: (NavOptionsBuilder.() -> Unit)? = null): Unit {
+            navHostController.navigate("HomeDestination", navOptions ?: { })
           }
-          public fun navigateToDetailDestination(): Unit {
-            navHostController.navigate("DetailDestination")
+          public fun navigateToDetailDestination(navOptions: (NavOptionsBuilder.() -> Unit)? = null): Unit {
+            navHostController.navigate("DetailDestination", navOptions ?: { })
+          }
+          public fun navigateHome(navOptions: (NavOptionsBuilder.() -> Unit)? = null): Unit {
+            navHostController.navigate("HomeDestination", navOptions ?: { })
+          }
+        
+          public fun navigateUp(): Unit {
+            navHostController.navigateUp()
           }
         }
         """.trimIndent()
@@ -334,21 +438,33 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
 
         val expected = """
         package $PACKAGE
-        
+
         import androidx.compose.runtime.Composable
         import androidx.navigation.NavHostController
-        import kotlin.Unit
-        import kotlin.String
+        import androidx.navigation.NavOptionsBuilder
         import kotlin.Int
+        import kotlin.String
+        import kotlin.Unit
         
         public class Navigator(
           private val navHostController: NavHostController,
         ) {
-          public fun navigateToHomeDestination(name: String): Unit {
-            navHostController.navigate("HomeDestination/${'$'}name")
+          public fun navigateToHomeDestination(name: String, navOptions: (NavOptionsBuilder.() -> Unit)? =
+              null): Unit {
+            navHostController.navigate("HomeDestination/${'$'}name", navOptions ?: { })
           }
-          public fun navigateToDetailDestination(age: Int): Unit {
-            navHostController.navigate("DetailDestination/${'$'}age")
+        
+          public fun navigateToDetailDestination(age: Int, navOptions: (NavOptionsBuilder.() -> Unit)? =
+              null): Unit {
+            navHostController.navigate("DetailDestination/${'$'}age", navOptions ?: { })
+          }
+        
+          public fun navigateHome(name: String, navOptions: (NavOptionsBuilder.() -> Unit)? = null): Unit {
+            navHostController.navigate("HomeDestination/${'$'}name", navOptions ?: { })
+          }
+        
+          public fun navigateUp(): Unit {
+            navHostController.navigateUp()
           }
         }
         """.trimIndent()
@@ -369,21 +485,33 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
 
         val expected = """
         package $PACKAGE
-        
+
         import androidx.compose.runtime.Composable
         import androidx.navigation.NavHostController
-        import kotlin.Unit
-        import kotlin.String
+        import androidx.navigation.NavOptionsBuilder
         import kotlin.Int
+        import kotlin.String
+        import kotlin.Unit
         
         public class Navigator(
           private val navHostController: NavHostController,
         ) {
-          public fun navigateToHomeDestination(name: String?): Unit {
-            navHostController.navigate("HomeDestination?argName=${'$'}name")
+          public fun navigateToHomeDestination(name: String?, navOptions: (NavOptionsBuilder.() -> Unit)? =
+              null): Unit {
+            navHostController.navigate("HomeDestination?argName=${'$'}name", navOptions ?: { })
           }
-          public fun navigateToDetailDestination(age: Int?): Unit {
-            navHostController.navigate("DetailDestination?argAge=${'$'}age")
+        
+          public fun navigateToDetailDestination(age: Int?, navOptions: (NavOptionsBuilder.() -> Unit)? =
+              null): Unit {
+            navHostController.navigate("DetailDestination?argAge=${'$'}age", navOptions ?: { })
+          }
+        
+          public fun navigateHome(name: String?, navOptions: (NavOptionsBuilder.() -> Unit)? = null): Unit {
+            navHostController.navigate("HomeDestination?argName=${'$'}name", navOptions ?: { })
+          }
+        
+          public fun navigateUp(): Unit {
+            navHostController.navigateUp()
           }
         }
         """.trimIndent()

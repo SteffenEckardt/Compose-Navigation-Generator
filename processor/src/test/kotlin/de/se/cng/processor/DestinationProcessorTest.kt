@@ -12,7 +12,6 @@ package de.se.cng.processor
 
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
-import de.se.cng.processor.generator.NavigatorClassGeneratorTest
 import de.se.cng.processor.processor.DestinationAnnotationProcessor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
@@ -100,13 +99,21 @@ class DestinationProcessorTest : ProcessorTestBase() {
         
         import androidx.compose.runtime.Composable
         import androidx.navigation.NavHostController
+        import androidx.navigation.NavOptionsBuilder
         import kotlin.Unit
         
         public class Navigator(
           private val navHostController: NavHostController,
         ) {
-          public fun navigateToHomeDestination(): Unit {
-            navHostController.navigate("HomeDestination")
+          public fun navigateToHomeDestination(navOptions: (NavOptionsBuilder.() -> Unit)? = null): Unit {
+            navHostController.navigate("HomeDestination", navOptions ?: { })
+          }
+          public fun navigateHome(navOptions: (NavOptionsBuilder.() -> Unit)? = null): Unit {
+            navHostController.navigate("HomeDestination", navOptions ?: { })
+          }
+        
+          public fun navigateUp(): Unit {
+            navHostController.navigateUp()
           }
         }
         """.trimIndent()
@@ -223,13 +230,20 @@ class DestinationProcessorTest : ProcessorTestBase() {
         
         import androidx.compose.runtime.Composable
         import androidx.navigation.NavHostController
+        import androidx.navigation.NavOptionsBuilder
         import kotlin.Unit
         
         public class Navigator(
           private val navHostController: NavHostController,
         ) {
-          public fun navigateToHomeDestination(): Unit {
-            navHostController.navigate("HomeDestination")
+          public fun navigateToHomeDestination(navOptions: (NavOptionsBuilder.() -> Unit)? = null): Unit {
+            navHostController.navigate("HomeDestination", navOptions ?: { })
+          }
+          public fun navigateHome(navOptions: (NavOptionsBuilder.() -> Unit)? = null): Unit {
+            navHostController.navigate("HomeDestination", navOptions ?: { })
+          }
+          public fun navigateUp(): Unit {
+            navHostController.navigateUp()
           }
         }
         """.trimIndent()
@@ -239,16 +253,23 @@ class DestinationProcessorTest : ProcessorTestBase() {
         
         import androidx.compose.runtime.Composable
         import androidx.navigation.NavHostController
+        import androidx.navigation.NavOptionsBuilder
         import kotlin.Unit
         
         public class Navigator(
           private val navHostController: NavHostController,
         ) {
-          public fun navigateToHomeDestination(): Unit {
-            navHostController.navigate("HomeDestination")
+          public fun navigateToHomeDestination(navOptions: (NavOptionsBuilder.() -> Unit)? = null): Unit {
+            navHostController.navigate("HomeDestination", navOptions ?: { })
           }
-          public fun navigateToDetailDestination(): Unit {
-            navHostController.navigate("DetailDestination")
+          public fun navigateToDetailDestination(navOptions: (NavOptionsBuilder.() -> Unit)? = null): Unit {
+            navHostController.navigate("DetailDestination", navOptions ?: { })
+          }
+          public fun navigateHome(navOptions: (NavOptionsBuilder.() -> Unit)? = null): Unit {
+            navHostController.navigate("HomeDestination", navOptions ?: { })
+          }
+          public fun navigateUp(): Unit {
+            navHostController.navigateUp()
           }
         }
         """.trimIndent()

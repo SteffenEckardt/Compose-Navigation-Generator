@@ -21,7 +21,7 @@ fun Template(title: String, navigator: Navigator, displayValues: () -> List<Pair
     SmallTopAppBar(
         title = { Text(text = title) },
         navigationIcon = {
-            IconButton(onClick = { navigator.navigateToHomeScreen() }) {
+            IconButton(onClick = { navigator.navigateHome() }) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Navigate Back")
             }
         }

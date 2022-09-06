@@ -47,9 +47,9 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
             
             @Composable
             public fun SetupNavHost(navController: NavHostController): Unit {
-              NavHost(navController = navController, startDestination = "HomeDestination/argArg")
+              NavHost(navController = navController, startDestination = "HomeDestination/{argArg}")
               {
-                composable("HomeDestination/argArg", arguments = listOf(
+                composable("HomeDestination/{argArg}", arguments = listOf(
                   navArgument("argArg"){
                     nullable = false
                     type = NavType.${typeName}Type
@@ -90,9 +90,9 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
             
             @Composable
             public fun SetupNavHost(navController: NavHostController): Unit {
-              NavHost(navController = navController, startDestination = "HomeDestination/argArg")
+              NavHost(navController = navController, startDestination = "HomeDestination/{argArg}")
               {
-                composable("HomeDestination/argArg", arguments = listOf(
+                composable("HomeDestination/{argArg}", arguments = listOf(
                   navArgument("argArg"){
                     nullable = false
                     type = NavType.${typeName}Type
@@ -133,9 +133,9 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
             
             @Composable
             public fun SetupNavHost(navController: NavHostController): Unit {
-              NavHost(navController = navController, startDestination = "HomeDestination/argArg")
+              NavHost(navController = navController, startDestination = "HomeDestination/{argArg}")
               {
-                composable("HomeDestination/argArg", arguments = listOf(
+                composable("HomeDestination/{argArg}", arguments = listOf(
                   navArgument("argArg"){
                     nullable = false
                     type = NavType.${typeName}Type
@@ -176,9 +176,9 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
             
             @Composable
             public fun SetupNavHost(navController: NavHostController): Unit {
-              NavHost(navController = navController, startDestination = "HomeDestination/argArg")
+              NavHost(navController = navController, startDestination = "HomeDestination/{argArg}")
               {
-                composable("HomeDestination/argArg", arguments = listOf(
+                composable("HomeDestination/{argArg}", arguments = listOf(
                   navArgument("argArg"){
                     nullable = false
                     type = NavType.${typeName}Type
@@ -219,9 +219,9 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
         
         @Composable
         public fun SetupNavHost(navController: NavHostController): Unit {
-          NavHost(navController = navController, startDestination = "HomeDestination/argArg")
+          NavHost(navController = navController, startDestination = "HomeDestination/{argArg}")
           {
-            composable("HomeDestination/argArg", arguments = listOf(
+            composable("HomeDestination/{argArg}", arguments = listOf(
               navArgument("argArg"){
                 nullable = false
                 type = NavType.${typeName}Type
@@ -261,9 +261,9 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
         
         @Composable
         public fun SetupNavHost(navController: NavHostController): Unit {
-          NavHost(navController = navController, startDestination = "HomeDestination/argArg")
+          NavHost(navController = navController, startDestination = "HomeDestination/{argArg}")
           {
-            composable("HomeDestination/argArg", arguments = listOf(
+            composable("HomeDestination/{argArg}", arguments = listOf(
               navArgument("argArg"){
                 nullable = false
                 type = NavType.FloatType
@@ -304,9 +304,9 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
         
         @Composable
         public fun SetupNavHost(navController: NavHostController): Unit {
-          NavHost(navController = navController, startDestination = "HomeDestination/argArg")
+          NavHost(navController = navController, startDestination = "HomeDestination/{argArg}")
           {
-            composable("HomeDestination/argArg", arguments = listOf(
+            composable("HomeDestination/{argArg}", arguments = listOf(
               navArgument("argArg"){
                 nullable = false
                 type = NavType.IntType
@@ -347,9 +347,9 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
             
             @Composable
             public fun SetupNavHost(navController: NavHostController): Unit {
-              NavHost(navController = navController, startDestination = "HomeDestination/argArg")
+              NavHost(navController = navController, startDestination = "HomeDestination/{argArg}")
               {
-                composable("HomeDestination/argArg", arguments = listOf(
+                composable("HomeDestination/{argArg}", arguments = listOf(
                   navArgument("argArg"){
                     nullable = false
                     type = NavType.IntType
@@ -390,9 +390,9 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
         
         @Composable
         public fun SetupNavHost(navController: NavHostController): Unit {
-          NavHost(navController = navController, startDestination = "HomeDestination/argArg")
+          NavHost(navController = navController, startDestination = "HomeDestination/{argArg}")
           {
-            composable("HomeDestination/argArg", arguments = listOf(
+            composable("HomeDestination/{argArg}", arguments = listOf(
               navArgument("argArg"){
                 nullable = false
                 type = NavType.IntType
