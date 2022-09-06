@@ -32,33 +32,63 @@ private fun generateNavigatorClass(destinations: List<NavigationDestination>) = 
     )
 
     destinations.forEach { destination ->
-        addFunction(generateNavigationExtensionFunction(destination))
+        addFunction(generateNavigationFunction(destination))
     }
+
+    addFunction(generateNavigateHomeFunction(destinations))
+    addFunction(navigateUpFunction)
+
     build()
 }
+
 
 private fun generateConstructor() = with(FunSpec.constructorBuilder()) {
     addParameter("navHostController", TypeNames.Classes.NavHostController)
     build()
 }
 
-private fun generateNavigationExtensionFunction(destination: NavigationDestination): FunSpec {
+private fun generateNavigationFunction(destination: NavigationDestination, specialName: String? = null): FunSpec {
     val functionParameters = destination.parameters.filterNavigator().map { parameter -> navigationFunctionParameters(parameter) }
     val actualName = if (destination.customName.isNullOrEmpty()) destination.actualName else destination.customName
+    val name = specialName ?: "navigateTo$actualName"
 
-    return with(FunSpec.builder("navigateTo$actualName")) {
+    return with(FunSpec.builder(name)) {
         addNavigationFunctionBody(destination)
         addParameters(functionParameters)
+        addParameter(navOptionsParameter)
         build()
     }
 }
 
+
+private val navOptionsBuilderLambda by lazy {
+    LambdaTypeName.get(receiver = TypeNames.Classes.NavOptionsBuilder, returnType = UNIT)
+}
+
+private val navOptionsParameter by lazy {
+    ParameterSpec
+        .builder("navOptions", navOptionsBuilderLambda.copy(nullable = true))
+        .defaultValue("null")
+        .build()
+}
+
+private val navigateUpFunction by lazy {
+    FunSpec
+        .builder("navigateUp")
+        .addStatement("navHostController.navigateUp()")
+        .build()
+}
+
+private fun generateNavigateHomeFunction(destinations: List<NavigationDestination>) = generateNavigationFunction(destinations.single { it.isHome }, specialName = "navigateHome")
+
 private fun navigationFunctionParameters(parameter: NavigationParameter) =
-    ParameterSpec.builder(parameter.name, parameter.type.className.copy(nullable = parameter.isNullable)).build()
+    ParameterSpec
+        .builder(parameter.name, parameter.type.className.copy(nullable = parameter.isNullable))
+        .build()
 
 private fun FunSpec.Builder.addNavigationFunctionBody(destination: NavigationDestination) = with(this) {
     val navRouteActual = navRouteActual(destination)
-    addStatement("navHostController.navigate(\"%L\")", navRouteActual)
+    addStatement("navHostController.navigate(\"%L\", navOptions ?: { })", navRouteActual)
 }
 
 private fun navRouteActual(navigationDestination: NavigationDestination): String {

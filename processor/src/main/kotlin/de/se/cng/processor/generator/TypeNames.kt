@@ -7,6 +7,7 @@ internal object TypeNames {
     object Classes {
         val NavHostController = ClassName("androidx.navigation", "NavHostController")
         val Navigator = ClassName("de.se.cng.generated", "Navigator")
+        val NavOptionsBuilder = ClassName("androidx.navigation", "NavOptionsBuilder")
     }
 
     object Annotations {
