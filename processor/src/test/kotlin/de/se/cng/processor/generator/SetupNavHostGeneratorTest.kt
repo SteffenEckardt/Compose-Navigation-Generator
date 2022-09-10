@@ -11,6 +11,7 @@
 package de.se.cng.processor.generator
 
 import de.se.cng.processor.ProcessorTestBase
+import de.se.cng.processor.generator.setup.ActualSetupFunctionGenerator
 import de.se.cng.processor.models.NavigationDestination
 import de.se.cng.processor.processor.DestinationAnnotationProcessor
 import org.junit.jupiter.api.DisplayName
@@ -46,8 +47,8 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
             import kotlin.Unit
             
             @Composable
-            public fun SetupNavHost(navController: NavHostController): Unit {
-              NavHost(navController = navController, startDestination = "HomeDestination/{argArg}")
+            public fun SetupNavHost(navHostController: NavHostController): Unit {
+              NavHost(navController = navHostController, startDestination = "HomeDestination/{argArg}")
               {
                 composable("HomeDestination/{argArg}", arguments = listOf(
                   navArgument("argArg"){
@@ -89,8 +90,8 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
             import kotlin.Unit
             
             @Composable
-            public fun SetupNavHost(navController: NavHostController): Unit {
-              NavHost(navController = navController, startDestination = "HomeDestination/{argArg}")
+            public fun SetupNavHost(navHostController: NavHostController): Unit {
+              NavHost(navController = navHostController, startDestination = "HomeDestination/{argArg}")
               {
                 composable("HomeDestination/{argArg}", arguments = listOf(
                   navArgument("argArg"){
@@ -132,8 +133,8 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
             import kotlin.Unit
             
             @Composable
-            public fun SetupNavHost(navController: NavHostController): Unit {
-              NavHost(navController = navController, startDestination = "HomeDestination/{argArg}")
+            public fun SetupNavHost(navHostController: NavHostController): Unit {
+              NavHost(navController = navHostController, startDestination = "HomeDestination/{argArg}")
               {
                 composable("HomeDestination/{argArg}", arguments = listOf(
                   navArgument("argArg"){
@@ -175,8 +176,8 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
             import kotlin.Unit
             
             @Composable
-            public fun SetupNavHost(navController: NavHostController): Unit {
-              NavHost(navController = navController, startDestination = "HomeDestination/{argArg}")
+            public fun SetupNavHost(navHostController: NavHostController): Unit {
+              NavHost(navController = navHostController, startDestination = "HomeDestination/{argArg}")
               {
                 composable("HomeDestination/{argArg}", arguments = listOf(
                   navArgument("argArg"){
@@ -218,8 +219,8 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
         import kotlin.Unit
         
         @Composable
-        public fun SetupNavHost(navController: NavHostController): Unit {
-          NavHost(navController = navController, startDestination = "HomeDestination/{argArg}")
+        public fun SetupNavHost(navHostController: NavHostController): Unit {
+          NavHost(navController = navHostController, startDestination = "HomeDestination/{argArg}")
           {
             composable("HomeDestination/{argArg}", arguments = listOf(
               navArgument("argArg"){
@@ -260,8 +261,8 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
         import kotlin.Unit
         
         @Composable
-        public fun SetupNavHost(navController: NavHostController): Unit {
-          NavHost(navController = navController, startDestination = "HomeDestination/{argArg}")
+        public fun SetupNavHost(navHostController: NavHostController): Unit {
+          NavHost(navController = navHostController, startDestination = "HomeDestination/{argArg}")
           {
             composable("HomeDestination/{argArg}", arguments = listOf(
               navArgument("argArg"){
@@ -303,8 +304,8 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
         import kotlin.Unit
         
         @Composable
-        public fun SetupNavHost(navController: NavHostController): Unit {
-          NavHost(navController = navController, startDestination = "HomeDestination/{argArg}")
+        public fun SetupNavHost(navHostController: NavHostController): Unit {
+          NavHost(navController = navHostController, startDestination = "HomeDestination/{argArg}")
           {
             composable("HomeDestination/{argArg}", arguments = listOf(
               navArgument("argArg"){
@@ -346,8 +347,8 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
             import kotlin.Unit
             
             @Composable
-            public fun SetupNavHost(navController: NavHostController): Unit {
-              NavHost(navController = navController, startDestination = "HomeDestination/{argArg}")
+            public fun SetupNavHost(navHostController: NavHostController): Unit {
+              NavHost(navController = navHostController, startDestination = "HomeDestination/{argArg}")
               {
                 composable("HomeDestination/{argArg}", arguments = listOf(
                   navArgument("argArg"){
@@ -389,8 +390,8 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
         import kotlin.Unit
         
         @Composable
-        public fun SetupNavHost(navController: NavHostController): Unit {
-          NavHost(navController = navController, startDestination = "HomeDestination/{argArg}")
+        public fun SetupNavHost(navHostController: NavHostController): Unit {
+          NavHost(navController = navHostController, startDestination = "HomeDestination/{argArg}")
           {
             composable("HomeDestination/{argArg}", arguments = listOf(
               navArgument("argArg"){
@@ -431,11 +432,11 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
         import kotlin.Unit
         
         @Composable
-        public fun SetupNavHost(navController: NavHostController): Unit {
-          NavHost(navController = navController, startDestination = "HomeDestination")
+        public fun SetupNavHost(navHostController: NavHostController): Unit {
+          NavHost(navController = navHostController, startDestination = "HomeDestination")
           {
             composable("HomeDestination") {
-              HomeDestination(navigator=Navigator(navController))
+              HomeDestination(navigator=Navigator(navHostController))
             }
           }
         }
@@ -445,6 +446,6 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
     }
 
     private fun List<NavigationDestination>.buildSource(): String {
-        return generateSetupFile(PACKAGE, this, false).toString()
+        return ActualSetupFunctionGenerator(PACKAGE, this.toSet(), false).generate().toString()
     }
 }

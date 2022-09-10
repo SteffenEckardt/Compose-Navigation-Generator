@@ -11,6 +11,7 @@
 package de.se.cng.processor.generator
 
 import de.se.cng.processor.ProcessorTestBase
+import de.se.cng.processor.generator.navigator.ActualNavigatorClassGenerator
 import de.se.cng.processor.models.NavigationDestination
 import de.se.cng.processor.processor.DestinationAnnotationProcessor
 import org.junit.jupiter.api.Test
@@ -523,7 +524,7 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
     }
 
     private fun List<NavigationDestination>.buildSource(): String {
-        return generateNavigatorFile(PACKAGE, this, false).toString()
+        return ActualNavigatorClassGenerator(PACKAGE, this.toSet(), false).generate().toString()
     }
 
 }

@@ -84,8 +84,8 @@ class DestinationProcessorTest : ProcessorTestBase() {
         import kotlin.Unit
         
         @Composable
-        public fun SetupNavHost(navController: NavHostController): Unit {
-          NavHost(navController = navController, startDestination = "HomeDestination")
+        public fun SetupNavHost(navHostController: NavHostController): Unit {
+          NavHost(navController = navHostController, startDestination = "HomeDestination")
           {
             composable("HomeDestination") { 
               HomeDestination()
@@ -187,8 +187,8 @@ class DestinationProcessorTest : ProcessorTestBase() {
         import kotlin.Unit
         
         @Composable
-        public fun SetupNavHost(navController: NavHostController): Unit {
-          NavHost(navController = navController, startDestination = "HomeDestination")
+        public fun SetupNavHost(navHostController: NavHostController): Unit {
+          NavHost(navController = navHostController, startDestination = "HomeDestination")
           {
             composable("HomeDestination") { 
               HomeDestination()
@@ -212,8 +212,8 @@ class DestinationProcessorTest : ProcessorTestBase() {
         import kotlin.Unit
         
         @Composable
-        public fun SetupNavHost(navController: NavHostController): Unit {
-          NavHost(navController = navController, startDestination = "HomeDestination")
+        public fun SetupNavHost(navHostController: NavHostController): Unit {
+          NavHost(navController = navHostController, startDestination = "HomeDestination")
           {
             composable("HomeDestination") { 
               HomeDestination()
