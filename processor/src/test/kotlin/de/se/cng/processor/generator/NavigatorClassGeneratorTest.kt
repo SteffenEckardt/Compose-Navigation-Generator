@@ -12,8 +12,11 @@ package de.se.cng.processor.generator
 
 import de.se.cng.processor.ProcessorTestBase
 import de.se.cng.processor.generator.navigator.ActualNavigatorClassGenerator
+import de.se.cng.processor.generator.navigator.StubNavigatorClassGenerator
 import de.se.cng.processor.models.NavigationDestination
 import de.se.cng.processor.processor.DestinationAnnotationProcessor
+import de.se.cng.processor.utils.SourceFactory
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class NavigatorClassGeneratorTest : ProcessorTestBase() {
@@ -22,15 +25,18 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         private const val PACKAGE = DestinationAnnotationProcessor.PACKAGE
     }
 
-    @Test
-    fun `ignore single Navigator parameter`() {
-        val destinations = SourceFactory {
-            Home {
-                Navigator()
-            }
-        }
+    @Nested
+    inner class Actual {
 
-        val expected = """
+        @Test
+        fun `ignore single Navigator parameter`() {
+            val destinations = SourceFactory {
+                Home {
+                    Navigator()
+                }
+            }
+
+            val expected = """
         package $PACKAGE
         
         import androidx.compose.runtime.Composable
@@ -55,19 +61,19 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         }
         """.trimIndent()
 
-        assertSourceEquals(expected, destinations.buildSource())
-    }
-
-    @Test
-    fun `ignore Navigator as one of multiple parameters`() {
-        val destinations = SourceFactory {
-            Home {
-                Name()
-                Navigator()
-            }
+            assertSourceEquals(expected, destinations.buildSource())
         }
 
-        val expected = """
+        @Test
+        fun `ignore Navigator as one of multiple parameters`() {
+            val destinations = SourceFactory {
+                Home {
+                    Name()
+                    Navigator()
+                }
+            }
+
+            val expected = """
         package $PACKAGE
 
         import androidx.compose.runtime.Composable
@@ -94,16 +100,16 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         }
         """.trimIndent()
 
-        assertSourceEquals(expected, destinations.buildSource())
-    }
-
-    @Test
-    fun `generate 1 navigation function entry with no arguments`() {
-        val destinations = SourceFactory {
-            Home { }
+            assertSourceEquals(expected, destinations.buildSource())
         }
 
-        val expected = """
+        @Test
+        fun `generate 1 navigation function entry with no arguments`() {
+            val destinations = SourceFactory {
+                Home { }
+            }
+
+            val expected = """
         package $PACKAGE
         
         import androidx.compose.runtime.Composable
@@ -127,21 +133,21 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         }
         """.trimIndent()
 
-        assertSourceEquals(
-            expected,
-            destinations.buildSource()
-        )
-    }
-
-    @Test
-    fun `generate 1 navigation function entry with 1 non-null argument`() {
-        val destinations = SourceFactory {
-            Home {
-                Name()
-            }
+            assertSourceEquals(
+                expected,
+                destinations.buildSource()
+            )
         }
 
-        val expected = """
+        @Test
+        fun `generate 1 navigation function entry with 1 non-null argument`() {
+            val destinations = SourceFactory {
+                Home {
+                    Name()
+                }
+            }
+
+            val expected = """
         package $PACKAGE
         
         import androidx.compose.runtime.Composable
@@ -167,21 +173,21 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         }
         """.trimIndent()
 
-        assertSourceEquals(
-            expected,
-            destinations.buildSource()
-        )
-    }
-
-    @Test
-    fun `generate 1 navigation function entry with 1 nullable argument`() {
-        val destinations = SourceFactory {
-            Home {
-                Name(true)
-            }
+            assertSourceEquals(
+                expected,
+                destinations.buildSource()
+            )
         }
 
-        val expected = """
+        @Test
+        fun `generate 1 navigation function entry with 1 nullable argument`() {
+            val destinations = SourceFactory {
+                Home {
+                    Name(true)
+                }
+            }
+
+            val expected = """
         package $PACKAGE
         
         import androidx.compose.runtime.Composable
@@ -208,23 +214,23 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         }
         """.trimIndent()
 
-        assertSourceEquals(
-            expected,
-            destinations.buildSource()
-        )
-    }
-
-    @Test
-    fun `generate 1 navigation function entry with 3 non-null arguments`() {
-        val destinations = SourceFactory {
-            Home {
-                Name()
-                Age()
-                Height()
-            }
+            assertSourceEquals(
+                expected,
+                destinations.buildSource()
+            )
         }
 
-        val expected = """
+        @Test
+        fun `generate 1 navigation function entry with 3 non-null arguments`() {
+            val destinations = SourceFactory {
+                Home {
+                    Name()
+                    Age()
+                    Height()
+                }
+            }
+
+            val expected = """
         package $PACKAGE
 
         import androidx.compose.runtime.Composable
@@ -262,23 +268,23 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         }
         """.trimIndent()
 
-        assertSourceEquals(
-            expected,
-            destinations.buildSource()
-        )
-    }
-
-    @Test
-    fun `generate 1 navigation function entry with 3 nullable arguments`() {
-        val destinations = SourceFactory {
-            Home {
-                Name(true)
-                Age(true)
-                Height(true)
-            }
+            assertSourceEquals(
+                expected,
+                destinations.buildSource()
+            )
         }
 
-        val expected = """
+        @Test
+        fun `generate 1 navigation function entry with 3 nullable arguments`() {
+            val destinations = SourceFactory {
+                Home {
+                    Name(true)
+                    Age(true)
+                    Height(true)
+                }
+            }
+
+            val expected = """
         package $PACKAGE
 
         import androidx.compose.runtime.Composable
@@ -318,25 +324,25 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         }
         """.trimIndent()
 
-        assertSourceEquals(
-            expected,
-            destinations.buildSource()
-        )
-    }
-
-    @Test
-    fun `generate 1 navigation function entry with 4 mixed arguments`() {
-        val destinations = SourceFactory {
-            Home {
-                Name(true)
-                Age(false)
-                Height(true)
-                Weight(false)
-            }
+            assertSourceEquals(
+                expected,
+                destinations.buildSource()
+            )
         }
 
+        @Test
+        fun `generate 1 navigation function entry with 4 mixed arguments`() {
+            val destinations = SourceFactory {
+                Home {
+                    Name(true)
+                    Age(false)
+                    Height(true)
+                    Weight(false)
+                }
+            }
 
-        val expected = """
+
+            val expected = """
         package $PACKAGE
         
         import androidx.compose.runtime.Composable
@@ -378,21 +384,21 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         }
         """.trimIndent()
 
-        assertSourceEquals(
-            expected,
-            destinations.buildSource()
-        )
-    }
-
-    @Test
-    fun `generate 2 navigation functions entry with no arguments`() {
-        val destinations = SourceFactory {
-            Home { }
-            Details { }
+            assertSourceEquals(
+                expected,
+                destinations.buildSource()
+            )
         }
 
+        @Test
+        fun `generate 2 navigation functions entry with no arguments`() {
+            val destinations = SourceFactory {
+                Home { }
+                Details { }
+            }
 
-        val expected = """
+
+            val expected = """
         package $PACKAGE
         
         import androidx.compose.runtime.Composable
@@ -419,25 +425,25 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         }
         """.trimIndent()
 
-        assertSourceEquals(
-            expected,
-            destinations.buildSource()
-        )
-    }
-
-    @Test
-    fun `generate 2 navigation functions entry with 1 non-null argument`() {
-        val destinations = SourceFactory {
-            Home {
-                Name()
-            }
-            Details {
-                Age()
-            }
+            assertSourceEquals(
+                expected,
+                destinations.buildSource()
+            )
         }
 
+        @Test
+        fun `generate 2 navigation functions entry with 1 non-null argument`() {
+            val destinations = SourceFactory {
+                Home {
+                    Name()
+                }
+                Details {
+                    Age()
+                }
+            }
 
-        val expected = """
+
+            val expected = """
         package $PACKAGE
 
         import androidx.compose.runtime.Composable
@@ -470,21 +476,20 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         }
         """.trimIndent()
 
-        assertSourceEquals(
-            expected,
-            destinations.buildSource()
-        )
-    }
-
-
-    @Test
-    fun `generate 2 navigation functions entry with 1 nullable argument`() {
-        val destinations = SourceFactory {
-            Home { Name(true) }
-            Details { Age(true) }
+            assertSourceEquals(
+                expected,
+                destinations.buildSource()
+            )
         }
 
-        val expected = """
+        @Test
+        fun `generate 2 navigation functions entry with 1 nullable argument`() {
+            val destinations = SourceFactory {
+                Home { Name(true) }
+                Details { Age(true) }
+            }
+
+            val expected = """
         package $PACKAGE
 
         import androidx.compose.runtime.Composable
@@ -517,14 +522,108 @@ class NavigatorClassGeneratorTest : ProcessorTestBase() {
         }
         """.trimIndent()
 
-        assertSourceEquals(
-            expected,
-            destinations.buildSource()
-        )
+            assertSourceEquals(
+                expected,
+                destinations.buildSource()
+            )
+        }
+
+        private fun List<NavigationDestination>.buildSource(): String {
+            return ActualNavigatorClassGenerator(PACKAGE, this.toSet(), false).generate().toString()
+        }
+
     }
 
-    private fun List<NavigationDestination>.buildSource(): String {
-        return ActualNavigatorClassGenerator(PACKAGE, this.toSet(), false).generate().toString()
+    @Nested
+    inner class Stub {
+
+        @Test
+        fun `stubs are generated for single destination`() {
+            val destinations = SourceFactory {
+                Home { }
+            }
+
+            val expected = """
+            package de.se.cng.generated               
+            
+            import androidx.compose.runtime.Composable
+            import androidx.navigation.NavHostController
+            import kotlin.Any
+            import kotlin.Unit
+            
+            public class Navigator(
+              private val navHostController: NavHostController,
+            ) {
+              public fun navigateToHomeDestination(vararg stub: Any?): Unit {
+                TODO("Compose navigation could not be generated. Check build log for more details.")
+              }
+            
+              public fun navigateHome(vararg stub: Any?): Unit {
+                TODO("Compose navigation could not be generated. Check build log for more details.")
+              }
+            
+              public fun navigateUp(): Unit {
+                navHostController.navigateUp()
+              }
+            }
+            """.trimIndent()
+
+            assertSourceEquals(
+                expected,
+                destinations.buildSource()
+            )
+        }
+
+        @Test
+        fun `stubs are generated for multiple destinations`() {
+            val destinations = SourceFactory {
+                Home { }
+                Details {  }
+                List {  }
+            }
+
+            val expected = """
+            package de.se.cng.generated               
+
+            import androidx.compose.runtime.Composable
+            import androidx.navigation.NavHostController
+            import kotlin.Any
+            import kotlin.Unit
+            
+            public class Navigator(
+              private val navHostController: NavHostController,
+            ) {
+              public fun navigateToHomeDestination(vararg stub: Any?): Unit {
+                TODO("Compose navigation could not be generated. Check build log for more details.")
+              }
+
+              public fun navigateToDetailDestination(vararg stub: Any?): Unit {
+                TODO("Compose navigation could not be generated. Check build log for more details.")
+              }
+
+              public fun navigateToListDestination(vararg stub: Any?): Unit {
+                TODO("Compose navigation could not be generated. Check build log for more details.")
+              }
+            
+              public fun navigateHome(vararg stub: Any?): Unit {
+                TODO("Compose navigation could not be generated. Check build log for more details.")
+              }
+            
+              public fun navigateUp(): Unit {
+                navHostController.navigateUp()
+              }
+            }
+            """.trimIndent()
+
+            assertSourceEquals(
+                expected,
+                destinations.buildSource()
+            )
+        }
+
+        private fun List<NavigationDestination>.buildSource(): String {
+            return StubNavigatorClassGenerator(PACKAGE, this.map { it.actualName }.toSet(), false).generate().toString()
+        }
     }
 
 }

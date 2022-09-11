@@ -10,23 +10,8 @@ import de.se.cng.processor.generator.TypeNames
 import de.se.cng.processor.models.NavigationDestination
 import de.se.cng.processor.models.NavigationParameter
 
-class ActualSetupFunctionGenerator(private val `package`: String, private val destinations: Set<NavigationDestination>, enableLogging: Boolean) :
-    SetupFunctionGeneratorBase(enableLogging) {
-
-    override fun generate() = with(FileSpec.builder(`package`, fileName)) {
-        addImports()
-        addSetupFunction()
-        loggingTag()
-        build()
-    }
-
-    override fun FileSpec.Builder.addSetupFunction() = addFunction(FunSpec
-        .builder("SetupNavHost")
-        .addAnnotation(TypeNames.Annotations.Composable)
-        .addParameter(Parameter_NavHostController, TypeNames.Classes.NavHostController)
-        .addSetupBody(destinations)
-        .build()
-    )
+class ActualSetupFunctionGenerator(`package`: String, destinations: Set<NavigationDestination>, enableLogging: Boolean) :
+    SetupFunctionGeneratorBase(`package`, destinations, enableLogging) {
 
     /**
      * ```kotlin
@@ -53,7 +38,7 @@ class ActualSetupFunctionGenerator(private val `package`: String, private val de
     /***
      * ```kotlin
      * composable("...", arguments = ...) { backStackEntry ->
-     *     Log.d(TAG, "Navigating to destination: \"...\"")
+     *     Log.d("file1", "Navigating to destination: \"...\"")
      *     ...()
      * }
      * ```

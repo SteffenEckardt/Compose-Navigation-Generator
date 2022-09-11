@@ -12,9 +12,12 @@ package de.se.cng.processor.generator
 
 import de.se.cng.processor.ProcessorTestBase
 import de.se.cng.processor.generator.setup.ActualSetupFunctionGenerator
+import de.se.cng.processor.generator.setup.StubSetupFunctionGenerator
 import de.se.cng.processor.models.NavigationDestination
 import de.se.cng.processor.processor.DestinationAnnotationProcessor
+import de.se.cng.processor.utils.SourceFactory
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 @DisplayName("Navigation Function Generator")
@@ -24,16 +27,19 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
         private const val PACKAGE = DestinationAnnotationProcessor.PACKAGE
     }
 
-    @Test
-    fun `string type is mapped correctly`() {
-        val typeName = "String"
-        val destinations = SourceFactory {
-            Home {
-                Parameter("arg", ParameterType.String)
-            }
-        }
+    @Nested
+    inner class Actual {
 
-        val expected = """
+        @Test
+        fun `string type is mapped correctly`() {
+            val typeName = "String"
+            val destinations = SourceFactory {
+                Home {
+                    Parameter("arg", ParameterType.String)
+                }
+            }
+
+            val expected = """
             package $PACKAGE
             
             import android.util.Log
@@ -64,19 +70,19 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
             }
             """.trimIndent()
 
-        assertSourceEquals(expected, destinations.buildSource())
-    }
-
-    @Test
-    fun `int type is mapped correctly`() {
-        val typeName = "Int"
-        val destinations = SourceFactory {
-            Home {
-                Parameter("arg", ParameterType.Int)
-            }
+            assertSourceEquals(expected, destinations.buildSource())
         }
 
-        val expected = """
+        @Test
+        fun `int type is mapped correctly`() {
+            val typeName = "Int"
+            val destinations = SourceFactory {
+                Home {
+                    Parameter("arg", ParameterType.Int)
+                }
+            }
+
+            val expected = """
             package $PACKAGE
             
             import android.util.Log
@@ -107,19 +113,19 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
             }
             """.trimIndent()
 
-        assertSourceEquals(expected, destinations.buildSource())
-    }
-
-    @Test
-    fun `float type is mapped correctly`() {
-        val typeName = "Float"
-        val destinations = SourceFactory {
-            Home {
-                Parameter("arg", ParameterType.Float)
-            }
+            assertSourceEquals(expected, destinations.buildSource())
         }
 
-        val expected = """
+        @Test
+        fun `float type is mapped correctly`() {
+            val typeName = "Float"
+            val destinations = SourceFactory {
+                Home {
+                    Parameter("arg", ParameterType.Float)
+                }
+            }
+
+            val expected = """
             package $PACKAGE
             
             import android.util.Log
@@ -150,19 +156,19 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
             }            
             """.trimIndent()
 
-        assertSourceEquals(expected, destinations.buildSource())
-    }
-
-    @Test
-    fun `long type is mapped correctly`() {
-        val typeName = "Long"
-        val destinations = SourceFactory {
-            Home {
-                Parameter("arg", ParameterType.Long)
-            }
+            assertSourceEquals(expected, destinations.buildSource())
         }
 
-        val expected = """
+        @Test
+        fun `long type is mapped correctly`() {
+            val typeName = "Long"
+            val destinations = SourceFactory {
+                Home {
+                    Parameter("arg", ParameterType.Long)
+                }
+            }
+
+            val expected = """
             package $PACKAGE
             
             import android.util.Log
@@ -193,19 +199,19 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
             }
             """.trimIndent()
 
-        assertSourceEquals(expected, destinations.buildSource())
-    }
-
-    @Test
-    fun `boolean type is mapped correctly`() {
-        val typeName = "Bool"
-        val destinations = SourceFactory {
-            Home {
-                Parameter("arg", ParameterType.Boolean)
-            }
+            assertSourceEquals(expected, destinations.buildSource())
         }
 
-        val expected = """
+        @Test
+        fun `boolean type is mapped correctly`() {
+            val typeName = "Bool"
+            val destinations = SourceFactory {
+                Home {
+                    Parameter("arg", ParameterType.Boolean)
+                }
+            }
+
+            val expected = """
         package $PACKAGE
         
         import android.util.Log
@@ -236,18 +242,18 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
         }
         """.trimIndent()
 
-        assertSourceEquals(expected, destinations.buildSource())
-    }
-
-    @Test
-    fun `double type is mapped correctly (via float)`() {
-        val destinations = SourceFactory {
-            Home {
-                Parameter("arg", ParameterType.Double)
-            }
+            assertSourceEquals(expected, destinations.buildSource())
         }
 
-        val expected = """
+        @Test
+        fun `double type is mapped correctly (via float)`() {
+            val destinations = SourceFactory {
+                Home {
+                    Parameter("arg", ParameterType.Double)
+                }
+            }
+
+            val expected = """
         package $PACKAGE
         
         import android.util.Log
@@ -278,19 +284,19 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
         }
         """.trimIndent()
 
-        assertSourceEquals(expected, destinations.buildSource())
-    }
-
-    @Test
-    fun `short type is mapped correctly (via int)`() {
-        val typeName = "Short"
-        val destinations = SourceFactory {
-            Home {
-                Parameter("arg", ParameterType.Short)
-            }
+            assertSourceEquals(expected, destinations.buildSource())
         }
 
-        val expected = """
+        @Test
+        fun `short type is mapped correctly (via int)`() {
+            val typeName = "Short"
+            val destinations = SourceFactory {
+                Home {
+                    Parameter("arg", ParameterType.Short)
+                }
+            }
+
+            val expected = """
         package $PACKAGE
         
         import android.util.Log
@@ -321,19 +327,19 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
         }
         """.trimIndent()
 
-        assertSourceEquals(expected, destinations.buildSource())
-    }
-
-    @Test
-    fun `byte type is mapped correctly (via int)`() {
-        val typeName = "Byte"
-        val destinations = SourceFactory {
-            Home {
-                Parameter("arg", ParameterType.Byte)
-            }
+            assertSourceEquals(expected, destinations.buildSource())
         }
 
-        val expected = """
+        @Test
+        fun `byte type is mapped correctly (via int)`() {
+            val typeName = "Byte"
+            val destinations = SourceFactory {
+                Home {
+                    Parameter("arg", ParameterType.Byte)
+                }
+            }
+
+            val expected = """
             package $PACKAGE
             
             import android.util.Log
@@ -364,19 +370,19 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
             }
             """.trimIndent()
 
-        assertSourceEquals(expected, destinations.buildSource())
-    }
-
-    @Test
-    fun `char type is mapped correctly (via int)`() {
-        val typeName = "Char"
-        val destinations = SourceFactory {
-            Home {
-                Parameter("arg", ParameterType.Char)
-            }
+            assertSourceEquals(expected, destinations.buildSource())
         }
 
-        val expected = """
+        @Test
+        fun `char type is mapped correctly (via int)`() {
+            val typeName = "Char"
+            val destinations = SourceFactory {
+                Home {
+                    Parameter("arg", ParameterType.Char)
+                }
+            }
+
+            val expected = """
         package $PACKAGE
         
         import android.util.Log
@@ -407,18 +413,18 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
         }
         """.trimIndent()
 
-        assertSourceEquals(expected, destinations.buildSource())
-    }
-
-    @Test
-    fun `navigator is injected`() {
-        val destinations = SourceFactory {
-            Home {
-                Navigator()
-            }
+            assertSourceEquals(expected, destinations.buildSource())
         }
 
-        val expected = """
+        @Test
+        fun `navigator is injected`() {
+            val destinations = SourceFactory {
+                Home {
+                    Navigator()
+                }
+            }
+
+            val expected = """
         package $PACKAGE
         
         import android.util.Log
@@ -442,10 +448,48 @@ class SetupNavHostGeneratorTest : ProcessorTestBase() {
         }
         """.trimIndent()
 
-        assertSourceEquals(expected, destinations.buildSource())
+            assertSourceEquals(expected, destinations.buildSource())
+        }
+
+        private fun List<NavigationDestination>.buildSource(): String {
+            return ActualSetupFunctionGenerator(PACKAGE, this.toSet(), false).generate().toString()
+        }
     }
 
-    private fun List<NavigationDestination>.buildSource(): String {
-        return ActualSetupFunctionGenerator(PACKAGE, this.toSet(), false).generate().toString()
+    @Nested
+    inner class Stub {
+
+        @Test
+        fun `stub setup function is generated`() {
+            val destinations = SourceFactory {
+                Home {
+                    Parameter("arg", ParameterType.Char)
+                }
+            }
+
+            val expected = """
+            package $PACKAGE
+            
+            import android.util.Log
+            import androidx.compose.runtime.Composable
+            import androidx.navigation.NavHostController
+            import androidx.navigation.NavType
+            import androidx.navigation.compose.NavHost
+            import androidx.navigation.compose.composable
+            import androidx.navigation.navArgument
+            import kotlin.Unit
+            
+            @Composable
+            public fun SetupNavHost(navHostController: NavHostController): Unit {
+                TODO("Compose navigation could not be generated. Check build log for more details.")
+            }
+            """.trimIndent()
+
+            assertSourceEquals(expected, destinations.buildSource())
+        }
+
+        private fun List<NavigationDestination>.buildSource(): String {
+            return StubSetupFunctionGenerator(PACKAGE, false).generate().toString()
+        }
     }
 }

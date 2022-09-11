@@ -53,7 +53,7 @@ public fun SetupNavHost(navController: NavHostController): Unit {
   NavHost(navController = navController, startDestination = "HomeScreen")
   {
     composable("HomeScreen") {
-      Log.d(TAG, "Navigating to HomeScreen") // If enabled, a logging call is inserted
+      Log.d("file1", "Navigating to HomeScreen") // If enabled, a logging call is inserted
       HomeScreen()
     }
   }
@@ -109,7 +109,7 @@ public fun SetupNavHost(navController: NavHostController): Unit {
   NavHost(navController = navController, startDestination = "HomeScreen")
   {
     composable("HomeScreen") {
-      Log.d(TAG, "Navigating to HomeScreen") // If enabled, a logging call is inserted
+      Log.d("file1", "Navigating to HomeScreen") // If enabled, a logging call is inserted
       HomeScreen()
     }
   }
@@ -170,11 +170,11 @@ public fun SetupNavHost(navController: NavHostController): Unit {
   NavHost(navController = navController, startDestination = "HomeScreen")
   {
     composable("HomeScreen") {
-      Log.d(TAG, "Navigating to HomeScreen")
+      Log.d("file1", "Navigating to HomeScreen")
       HomeScreen()
     }
     composable("DetailScreen") {
-      Log.d(TAG, "Navigating to DetailScreen")
+      Log.d("file1", "Navigating to DetailScreen")
       DetailScreen()
     }
   }
@@ -253,7 +253,7 @@ val navigationPath = "Destination?arg1&arg2&arg3" // ...
     {
       // Simple, no-argument destination
       composable("HomeScreen") {
-        Log.d(TAG, "Navigating to HomeScreen")
+        Log.d("file1", "Navigating to HomeScreen")
         HomeScreen()
       }
       // Destination with exclusivly non-nullable arguments
@@ -276,7 +276,7 @@ val navigationPath = "Destination?arg1&arg2&arg3" // ...
         requireNotNull(argName)   
         requireNotNull(argAge)    
 
-        Log.d(TAG, "Navigating to DetailScreen")
+        Log.d("file1", "Navigating to DetailScreen")
 
         // Destination is called with provided parameters
         DetailScreen(name=argName, age=argAge) 
@@ -306,7 +306,7 @@ val navigationPath = "Destination?arg1&arg2&arg3" // ...
         requireNotNull(argName) 
         requireNotNull(argAge)  
 
-        Log.d(TAG, "Navigating to UltraDetailScreen")
+        Log.d("file1", "Navigating to UltraDetailScreen")
 
         // Destination is called with provided parameters
         UltraDetailScreen(name=argName, age=argAge, height=argHeight)

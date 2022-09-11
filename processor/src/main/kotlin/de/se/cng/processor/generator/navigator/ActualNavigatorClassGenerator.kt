@@ -20,17 +20,6 @@ class ActualNavigatorClassGenerator(
         .defaultValue("null")
         .build()
 
-    override fun FileSpec.Builder.addNavigatorClass(destinations: Set<NavigationDestination>) = addType(with(TypeSpec.classBuilder(fileName)) {
-        addNavHostControllerProperty()
-        addConstructor()
-        destinations.forEach { destination ->
-            addNavigationFunction(destination)
-        }
-        addNavigateHomeFunction(destinations)
-        navigateUpFunction()
-        build()
-    })
-
     override fun TypeSpec.Builder.addNavigationFunction(destination: NavigationDestination, specialName: String?): TypeSpec.Builder {
         val actualName = if (destination.customName.isNullOrEmpty()) destination.actualName else destination.customName
         val name = specialName ?: "navigateTo$actualName"

@@ -22,27 +22,37 @@ abstract class NavigatorClassGeneratorBase(
         .addImport(TypeNames.Classes.NavHostController.packageName, TypeNames.Classes.NavHostController.simpleName)
         .addImport(TypeNames.Annotations.Composable.packageName, TypeNames.Annotations.Composable.simpleName)
 
+    private fun FileSpec.Builder.addNavigatorClass(destinations: Set<NavigationDestination>) = addType(with(TypeSpec.classBuilder(fileName)) {
+        addNavHostControllerProperty()
+        addConstructor()
+        destinations.forEach { destination ->
+            addNavigationFunction(destination)
+        }
+        addNavigateHomeFunction(destinations)
+        navigateUpFunction()
+        build()
+    })
 
-    protected fun TypeSpec.Builder.addConstructor() = primaryConstructor(FunSpec
+
+    private fun TypeSpec.Builder.addConstructor() = primaryConstructor(FunSpec
         .constructorBuilder()
         .addParameter("navHostController", TypeNames.Classes.NavHostController)
         .build()
     )
 
-    protected fun TypeSpec.Builder.addNavHostControllerProperty() = addProperty(PropertySpec
+    private fun TypeSpec.Builder.addNavHostControllerProperty() = addProperty(PropertySpec
         .builder("navHostController", TypeNames.Classes.NavHostController)
         .initializer("navHostController")
         .addModifiers(KModifier.PRIVATE)
         .build()
     )
 
-    protected fun TypeSpec.Builder.navigateUpFunction() = addFunction(FunSpec
+    private fun TypeSpec.Builder.navigateUpFunction() = addFunction(FunSpec
         .builder("navigateUp")
         .addStatement("navHostController.navigateUp()")
         .build()
     )
 
-    protected abstract fun FileSpec.Builder.addNavigatorClass(destinations: Set<NavigationDestination>): FileSpec.Builder
     protected abstract fun TypeSpec.Builder.addNavigationFunction(destination: NavigationDestination, specialName: String? = null): TypeSpec.Builder
     protected abstract fun TypeSpec.Builder.addNavigateHomeFunction(destinations: Set<NavigationDestination>): TypeSpec.Builder
     protected abstract fun FunSpec.Builder.addNavigationFunctionParameters(parameters: Set<NavigationParameter>): FunSpec.Builder

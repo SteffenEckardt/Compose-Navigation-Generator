@@ -15,7 +15,7 @@ import de.se.cng.processor.generator.navigator.NavigatorClassGeneratorBase
 import de.se.cng.processor.generator.navigator.StubNavigatorClassGenerator
 import de.se.cng.processor.generator.setup.ActualSetupFunctionGenerator
 import de.se.cng.processor.generator.setup.SetupFunctionGeneratorBase
-import de.se.cng.processor.generator.setup.StubFunctionGenerator
+import de.se.cng.processor.generator.setup.StubSetupFunctionGenerator
 import de.se.cng.processor.models.NavigationDestination
 import de.se.cng.processor.processor.DestinationAnnotationProcessor.GenerationType.*
 import de.se.cng.processor.visitors.FunctionDeclarationVisitor
@@ -65,7 +65,7 @@ class DestinationAnnotationProcessor(
             )
             Error -> writeKotlinFiles(
                 navigatorClassGenerator = StubNavigatorClassGenerator(PACKAGE, allDestinationNames, enableLogging),
-                setupFunctionGenerator = StubFunctionGenerator(PACKAGE, false)
+                setupFunctionGenerator = StubSetupFunctionGenerator(PACKAGE, false)
             )
             None  -> {
                 /* no-op */

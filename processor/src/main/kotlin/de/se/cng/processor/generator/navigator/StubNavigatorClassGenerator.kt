@@ -11,16 +11,6 @@ class StubNavigatorClassGenerator(
     generateLogging: Boolean = false,
 ) : NavigatorClassGeneratorBase(packageName, destinationNames.map { NavigationDestination(it, "") }.toSet(), generateLogging) {
 
-    override fun FileSpec.Builder.addNavigatorClass(destinations: Set<NavigationDestination>) = addType(with(TypeSpec.classBuilder(fileName)) {
-        addConstructor()
-        addNavHostControllerProperty()
-        destinations.forEach { destination ->
-            addNavigationFunction(destination)
-        }
-        addNavigateHomeFunction(destinations)
-        build()
-    })
-
     override fun TypeSpec.Builder.addNavigationFunction(destination: NavigationDestination, specialName: String?) =
         addFunction(FunSpec.builder("navigateTo${destination.actualName}")
             .addNavigationFunctionParameters(emptySet())
