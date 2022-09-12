@@ -40,10 +40,9 @@ import de.se.cng.processor.models.NavigationParameter
  * }
  * ```
  *
- * @param `package`[String] Package of the generated file.
+ * @param package Package of the generated file.
  * @param destinations Unique set of navigation destinations to include in the nav graph.
- * @param enableLogging If enabled, additional calls to the android logger are added,
- * detailing the workflow steps within the setup function.
+ * @param enableLogging If enabled, additional calls to the android logger are added, detailing the workflow steps within the setup function.
  *
  * @return The generator class for the setup function.
  */
