@@ -8,7 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import de.se.cng.ui.navigation.SetupNavHost
+import de.se.cng.generated.SetupNavHost
 import de.se.cng.ui.theme.DemoAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    SetupNavHost(navController = navController)
+                    SetupNavHost(navHostController = navController)
                 }
             }
         }

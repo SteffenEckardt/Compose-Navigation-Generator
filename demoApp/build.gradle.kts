@@ -10,12 +10,12 @@ val kspVersion: String by project
 
 android {
     namespace = "de.se.cng"
-    compileSdk = 32
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "de.se.cng"
         minSdk = 25
-        targetSdk = 32
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
 
@@ -30,7 +30,11 @@ android {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
+        getByName("debug") {
+            isMinifyEnabled = false
+        }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -42,7 +46,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.2.0"
+        kotlinCompilerExtensionVersion = "1.3.0"
     }
     packagingOptions {
         resources {
@@ -77,7 +81,8 @@ dependencies {
 
     implementation("androidx.compose.ui:ui:$composeVersion")
     implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
-    implementation("androidx.compose.material3:material3:1.0.0-alpha15")
+    implementation("androidx.compose.material3:material3:1.0.0-beta01")
+    implementation("androidx.compose.material:material-icons-extended:1.3.0-beta01")
     implementation("androidx.navigation:navigation-compose:$navVersion")
 
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeVersion")

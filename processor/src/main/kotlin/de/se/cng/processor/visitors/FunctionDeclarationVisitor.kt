@@ -1,36 +1,66 @@
 package de.se.cng.processor.visitors
 
-import com.google.devtools.ksp.symbol.KSFunctionDeclaration
-import com.google.devtools.ksp.symbol.KSNode
+import com.google.devtools.ksp.processing.KSPLogger
+import com.google.devtools.ksp.symbol.*
 import com.google.devtools.ksp.visitor.KSEmptyVisitor
 import com.squareup.kotlinpoet.ksp.toClassName
+import de.se.cng.annotation.Destination
+import de.se.cng.annotation.Home
+import de.se.cng.processor.generator.ParameterType
 import de.se.cng.processor.models.NavigationDestination
 import de.se.cng.processor.models.NavigationParameter
 
-class FunctionDeclarationVisitor : KSEmptyVisitor<Unit, NavigationDestination>() {
+internal class FunctionDeclarationVisitor(private val logger: KSPLogger) : KSEmptyVisitor<Unit, NavigationDestination>() {
 
     override fun defaultHandler(node: KSNode, data: Unit): NavigationDestination {
         TODO("Not yet implemented")
     }
 
-    override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit): NavigationDestination {
+    override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit): NavigationDestination = try {
         val destinationName = function.simpleName.asString()
         val destinationPackage = function.packageName.asString()
+        val customName = getAnnotationParameterValue(function, Destination::class.simpleName.toString(), "name")
+        val isHome = isAnnotated(function, Home::class.simpleName.toString())
 
         val destinationParameters = function.parameters
             .filterNot {
                 it.name == null
             }
-            .map {
-                val name = it.name!!.asString()
-                val type = it.type.resolve()
-                val className = type.toClassName()
+            .map { outerParameter ->
+                val name = outerParameter.name?.asString().orEmpty()
+                val type = outerParameter.type.resolve()
 
-                NavigationParameter(name, className, type.isMarkedNullable)
+                val parameterType = try {
+                    ParameterType.from(type.toClassName())
+                } catch (_: Exception) {
+                    ParameterType.from(outerParameter.type.toString())
+                }
+
+                NavigationParameter(name, parameterType, type.isMarkedNullable)
             }
+            .toSet()
 
-        return NavigationDestination(actualName = destinationName, actualPackage = destinationPackage, parameters = destinationParameters)
+        NavigationDestination(
+            actualName = destinationName,
+            customName = customName,
+            isHome = isHome,
+            actualPackage = destinationPackage,
+            parameters = destinationParameters
+        )
+    } catch (e: Exception) {
+        logger.error(e.message.toString())
+        throw e
     }
+
+    private fun getAnnotationParameterValue(function: KSFunctionDeclaration, annotationName: String, parameterName: String) = function.annotations
+        .single { it.shortName.asString() == annotationName }
+        .arguments
+        .toList()
+        .singleOrNull { it.name?.asString() == parameterName }
+        ?.value.toString()
+
+    private fun isAnnotated(function: KSFunctionDeclaration, annotationName: String) = function.annotations
+        .any { it.shortName.asString() == annotationName }
 }
 
 
